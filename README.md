@@ -16,7 +16,7 @@ Price-intelligence platform for Swiss buyers: crawls EU e-bike listings, compute
 | `backend/` | Java 21, Spring Boot 3.3, Flyway, JPA |
 | `frontend/` | Next.js 14 (App Router), Tailwind, next-intl — URLs **`/de-CH/…`** (default) and **`/en/…`** (language switcher) |
 
-**Deploy (GitHub + Vercel + API):** Vercel runs **`frontend/`** only; the API + PostgreSQL need a separate host. Checklist and env vars: **[DEPLOY.md](./DEPLOY.md)** · **`frontend/.env.production.example`**.
+**Deploy (GitHub + Vercel + API):** Vercel runs **`frontend/`** only; the API + PostgreSQL need a separate host. Checklist and env vars: **[DEPLOY.md](./DEPLOY.md)** · **`frontend/.env.production.example`** · first push: **[docs/SHIP_TO_GITHUB.md](./docs/SHIP_TO_GITHUB.md)**.
 
 ### Implemented in backend (beyond CRUD)
 
