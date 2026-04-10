@@ -128,23 +128,14 @@ public class PriceSenseLiveProbeService {
                 return new LiveProbeRowDto(slug, name, null, null, "empty brand/model");
             }
             String enc = URLEncoder.encode(q, StandardCharsets.UTF_8);
-            String searchUrl = origin + "/search?q=" + enc;
-            if (!robotsAllowService.isAllowed(searchUrl)) {
-                return new LiveProbeRowDto(slug, name, null, null, "robots.txt disallows search");
-            }
-            LiveCompetitorHttpFetch.HttpResult searchRes = httpFetch.get(searchUrl, delayMs);
-            if (searchRes.statusCode() < 200 || searchRes.statusCode() >= 400) {
-                return new LiveProbeRowDto(
-                        slug, name, null, null, "search HTTP " + searchRes.statusCode());
-            }
-            String productUrl = firstProductUrl(searchRes.bodyUtf8(), searchUrl);
+            String productUrl = findFirstProductUrl(origin, enc, delayMs);
             if (productUrl == null) {
                 return new LiveProbeRowDto(
                         slug,
                         name,
                         null,
                         null,
-                        "no /products/ link on search results (storefront may not be Shopify-style)");
+                        "no /products/ link after trying common Shopify search URLs (localized /search)");
             }
             if (!robotsAllowService.isAllowed(productUrl)) {
                 return new LiveProbeRowDto(slug, name, null, null, "robots.txt disallows product URL");
@@ -173,6 +164,37 @@ public class PriceSenseLiveProbeService {
             log.debug("live probe {} failed", slug, e);
             return new LiveProbeRowDto(slug, name, null, null, e.getMessage());
         }
+    }
+
+    /**
+     * Tries several Shopify-style search paths (locale-prefixed storefronts) until a product link is found.
+     */
+    private String findFirstProductUrl(String origin, String encodedQuery, int delayMs) throws Exception {
+        String[] searchPrefixes =
+                new String[] {
+                    "/search?q=",
+                    "/de/search?q=",
+                    "/en/search?q=",
+                    "/fr/search?q=",
+                    "/de-ch/search?q=",
+                    "/en-ch/search?q=",
+                    "/it/search?q="
+                };
+        for (String prefix : searchPrefixes) {
+            String searchUrl = origin + prefix + encodedQuery;
+            if (!robotsAllowService.isAllowed(searchUrl)) {
+                continue;
+            }
+            LiveCompetitorHttpFetch.HttpResult searchRes = httpFetch.get(searchUrl, delayMs);
+            if (searchRes.statusCode() < 200 || searchRes.statusCode() >= 400) {
+                continue;
+            }
+            String productUrl = firstProductUrl(searchRes.bodyUtf8(), searchUrl);
+            if (productUrl != null) {
+                return productUrl;
+            }
+        }
+        return null;
     }
 
     static String originFromWatchUrl(String watchUrl) {

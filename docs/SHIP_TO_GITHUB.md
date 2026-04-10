@@ -15,6 +15,6 @@
    git branch -M main
    git push -u origin main
    ```
-5. Confirm **Actions** → **CI** passes (backend `mvn test`, frontend `npm ci && npm run build`).
+5. Run **`./scripts/verify-build.sh`** locally (same as CI), or confirm **Actions** → **CI** passes after push.
 
 See **[DEPLOY.md](../DEPLOY.md)** for Vercel + API environment variables.

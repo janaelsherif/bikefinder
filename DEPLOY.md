@@ -26,10 +26,8 @@ Provision **PostgreSQL 14+** (Neon, Supabase, Railway Postgres, AWS RDS, etc.). 
 
 ## 3. Deploy the Spring Boot API
 
-1. Build a JAR: from `backend/`, run `./mvnw -DskipTests package` (or use CI).
-2. Run Java **21** with the JAR, or build the image from `backend/`:
-
-   ` ./mvnw -DskipTests package && docker build -t bikefinder-api .`
+1. Build a JAR: from `backend/`, run `./mvnw -DskipTests package` (or CI / Docker — see **§7**).
+2. Run Java **21** with the JAR, or run the **Docker** image (multi-stage build needs no local Maven).
 3. Set **at minimum**:
 
 | Variable | Purpose |
@@ -47,15 +45,6 @@ Provision **PostgreSQL 14+** (Neon, Supabase, Railway Postgres, AWS RDS, etc.). 
 | `EBF_STAFF_API_TOKEN` | Random secret; same value in Vercel as `EBF_STAFF_API_TOKEN` for server-side API calls |
 | `EBF_IMPORT_TOKEN` | Protects import/crawl system endpoints |
 | `EBF_MAIL_ENABLED`, `SPRING_MAIL_*` | If you use email alerts |
-| `EBF_PRICESENSE_LIVE` | Set to `true` only if you want **PriceSense** to hit competitor sites on each request (see `ebf.pricesense.live-competitor-search` in `application.yml`). Default **`false`**. Confirm **robots.txt** / terms and API load before enabling. |
-
-**PriceSense live tuning (optional, API only)**
-
-| Variable | Purpose |
-|----------|---------|
-| `EBF_PRICESENSE_LIVE_TIMEOUT` | Per-target probe timeout (seconds). |
-| `EBF_PRICESENSE_LIVE_MIN_OK` | Minimum successful live CHF prices before using live median (else DB fallback). |
-| `EBF_PRICESENSE_LIVE_DELAY_MS` | Delay between HTTP steps inside a probe (politeness). |
 
 **Never enable in production**
 
@@ -100,11 +89,32 @@ If you use **Rebike crawl**, **competitor watch**, **FX**, **mail digest**, the 
 - [ ] DB reachable from API; Flyway completed.
 - [ ] Open `https://YOUR-VERCEL-APP.vercel.app/de-CH` — listings load if DB has data (run Rebike crawl or import on the API side).
 - [ ] No dev-only flags enabled in production (`EBF_DEV_OPEN_SYSTEM_ENDPOINTS`, etc.).
-- [ ] If using **live PriceSense** (`EBF_PRICESENSE_LIVE=true`), you accepted load/legal implications; otherwise leave it **`false`**.
 
 ---
 
-## 7. Repo layout reminder
+## 7. Docker image (build without local JDK)
+
+From repo root, multi-stage **`backend/Dockerfile`** builds the JAR inside Docker:
+
+```bash
+docker build -f backend/Dockerfile -t bikefinder-api:latest backend
+```
+
+Run (set `SPRING_DATASOURCE_*` and `EBF_CORS_ORIGINS`):
+
+```bash
+docker run --rm -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL=jdbc:postgresql://HOST:5432/bikefinder \
+  -e SPRING_DATASOURCE_USERNAME=… -e SPRING_DATASOURCE_PASSWORD=… \
+  -e EBF_CORS_ORIGINS=https://your-app.vercel.app \
+  bikefinder-api:latest
+```
+
+See **`infra/render.yaml`** for a Render.com blueprint (Web Service + env placeholders).
+
+---
+
+## 8. Repo layout reminder
 
 | Path | Deployed where |
 |------|----------------|

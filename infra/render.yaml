@@ -1,0 +1,31 @@
+# Render.com blueprint — Web Service for the Spring Boot API.
+# Create a PostgreSQL instance in the Render dashboard (or use Neon/Supabase), then set sync: false secrets below.
+# Docs: https://render.com/docs/deploy-docker
+#
+# Deploy: connect this repo → New Blueprint → select render.yaml, or add a Web Service manually:
+#   - Environment: Docker
+#   - Dockerfile path: backend/Dockerfile
+#   - Docker build context: backend
+#
+services:
+  - type: web
+    name: bikefinder-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: starter
+    region: frankfurt
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: EBF_CORS_ORIGINS
+        sync: false
+      - key: EBF_IMPORT_TOKEN
+        sync: false
+      - key: EBF_STAFF_API_TOKEN
+        sync: false

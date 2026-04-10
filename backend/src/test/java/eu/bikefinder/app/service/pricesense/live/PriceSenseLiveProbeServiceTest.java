@@ -21,4 +21,14 @@ class PriceSenseLiveProbeServiceTest {
                 "https://shop.example/products/foo-bar",
                 PriceSenseLiveProbeService.firstProductUrl(html, base));
     }
+
+    @Test
+    void firstProductUrl_findsLocaleProductPath() {
+        String html =
+                "<html><body><a href=\"/de-ch/products/foo-bar\">x</a></body></html>";
+        String base = "https://shop.example/de-ch/search?q=test";
+        assertEquals(
+                "https://shop.example/de-ch/products/foo-bar",
+                PriceSenseLiveProbeService.firstProductUrl(html, base));
+    }
 }

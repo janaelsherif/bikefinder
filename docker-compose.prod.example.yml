@@ -1,0 +1,38 @@
+# Example: API container + Postgres on one host (adjust secrets; do not commit .env with passwords).
+# Copy to docker-compose.prod.yml (gitignored locally) or use as reference.
+# Usage: docker compose -f docker-compose.prod.example.yml up -d
+#
+# For production, prefer a managed DB (Neon, RDS) and only run the `api` service.
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: bikefinder
+      POSTGRES_USER: bikefinder
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+    volumes:
+      - ebf_pg_prod:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bikefinder -d bikefinder"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/bikefinder
+      SPRING_DATASOURCE_USERNAME: bikefinder
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      EBF_CORS_ORIGINS: ${EBF_CORS_ORIGINS:-http://localhost:3000}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  ebf_pg_prod:

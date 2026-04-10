@@ -11,3 +11,6 @@ node_modules/
 
 # Local JDK (optional; see README)
 .jdks/
+
+# Local override of docker-compose.prod.example.yml
+docker-compose.prod.yml
