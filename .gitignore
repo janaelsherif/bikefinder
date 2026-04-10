@@ -1,0 +1,13 @@
+.env
+.idea/
+*.iml
+target/
+.gradle/
+build/
+.next/
+node_modules/
+*.log
+.DS_Store
+
+# Local JDK (optional; see README)
+.jdks/

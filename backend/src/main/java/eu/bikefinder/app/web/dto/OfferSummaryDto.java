@@ -1,0 +1,76 @@
+package eu.bikefinder.app.web.dto;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+public record OfferSummaryDto(
+        UUID id,
+        String sourceName,
+        String countryCode,
+        String sourceType,
+        String brand,
+        String model,
+        Integer modelYear,
+        String bikeCategory,
+        String bikeCondition,
+        String motorBrand,
+        Integer batteryWh,
+        Integer mileageKm,
+        String warrantyType,
+        Integer warrantyMonths,
+        BigDecimal landedPriceChf,
+        BigDecimal discountVsSwissPct,
+        boolean bargain,
+        boolean topDeal,
+        BigDecimal qualityScore,
+        String imageUrl,
+        String sourceUrl,
+        String matchTier
+) {
+    public OfferSummaryDto(
+            UUID id,
+            String sourceName,
+            String countryCode,
+            String sourceType,
+            String brand,
+            String model,
+            Integer modelYear,
+            String bikeCategory,
+            String bikeCondition,
+            String motorBrand,
+            Integer batteryWh,
+            Integer mileageKm,
+            String warrantyType,
+            Integer warrantyMonths,
+            BigDecimal landedPriceChf,
+            BigDecimal discountVsSwissPct,
+            boolean bargain,
+            boolean topDeal,
+            BigDecimal qualityScore,
+            String imageUrl,
+            String sourceUrl) {
+        this(
+                id,
+                sourceName,
+                countryCode,
+                sourceType,
+                brand,
+                model,
+                modelYear,
+                bikeCategory,
+                bikeCondition,
+                motorBrand,
+                batteryWh,
+                mileageKm,
+                warrantyType,
+                warrantyMonths,
+                landedPriceChf,
+                discountVsSwissPct,
+                bargain,
+                topDeal,
+                qualityScore,
+                imageUrl,
+                sourceUrl,
+                null);
+    }
+}

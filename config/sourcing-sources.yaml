@@ -1,0 +1,168 @@
+# Hamza / procurement — B2B BIKE Sourcing Directory (canonical seeds for EuropeBikeFinder).
+# Mirrors docs/PATRICK_WUNSCH_AND_SOURCES.md §2. All crawl_enabled: false until robots.txt + ToS review.
+# Existing dev seed: Rebike DE (Flyway V3) — do not duplicate that row in DB.
+
+version: 1
+notes:
+  - "Verify robots.txt and site terms before enabling crawl_enabled."
+  - "Import / landed CHF logic applies to EU listings; CH sources (e.g. velomarkt.ch) need separate pricing rules."
+
+sources:
+  # Germany (primary) — additional to Rebike (seeded separately)
+  - id: jobrad-loop-de
+    country: DE
+    type: refurbisher
+    base_url: https://www.jobrad-loop.com
+    crawl_enabled: false
+  - id: ebay-de
+    country: DE
+    type: classifieds
+    base_url: https://www.ebay.de
+    crawl_enabled: false
+  - id: fahrrad-de
+    country: DE
+    type: dealer_marketplace
+    base_url: https://www.fahrrad.de
+    crawl_enabled: false
+  - id: rose-de
+    country: DE
+    type: dealer_marketplace
+    base_url: https://www.rosebikes.com
+    crawl_enabled: false
+  - id: velokontor-de
+    country: DE
+    type: dealer_marketplace
+    base_url: https://www.velokontor.de
+    crawl_enabled: false
+  - id: hood-de
+    country: DE
+    type: classifieds
+    base_url: https://www.hood.de
+    crawl_enabled: false
+  - id: likedbikes-de
+    country: DE
+    type: refurbisher
+    base_url: https://www.likedbikes.com
+    crawl_enabled: false
+  - id: gruene-welle-de
+    country: DE
+    type: dealer_marketplace
+    base_url: https://www.gruene-welle.de
+    crawl_enabled: false
+
+  # Netherlands — additional to Marktplaats / BikeFair (V7)
+  - id: upway-nl
+    country: NL
+    type: refurbisher
+    base_url: https://www.upway.nl
+    crawl_enabled: false
+  - id: 2dehands-nl
+    country: NL
+    type: classifieds
+    base_url: https://www.2dehands.nl
+    crawl_enabled: false
+  - id: fietsenwinkel-nl
+    country: NL
+    type: dealer_marketplace
+    base_url: https://www.fietsenwinkel.nl
+    crawl_enabled: false
+
+  # France
+  - id: upway-fr
+    country: FR
+    type: refurbisher
+    base_url: https://www.upway.co/fr
+    crawl_enabled: false
+  - id: fnac-fr
+    country: FR
+    type: oem_outlet
+    base_url: https://www.fnac.com
+    crawl_enabled: false
+  - id: darty-fr
+    country: FR
+    type: oem_outlet
+    base_url: https://www.darty.com
+    crawl_enabled: false
+  - id: alltricks-fr
+    country: FR
+    type: dealer_marketplace
+    base_url: https://www.alltricks.fr
+    crawl_enabled: false
+
+  # Italy — additional to Subito (V7)
+  - id: ebay-it
+    country: IT
+    type: classifieds
+    base_url: https://www.ebay.it
+    crawl_enabled: false
+  - id: bikestrade-it
+    country: IT
+    type: dealer_marketplace
+    base_url: https://www.bikestrade.it
+    crawl_enabled: false
+  - id: olx-it
+    country: IT
+    type: classifieds
+    base_url: https://www.olx.it
+    crawl_enabled: false
+
+  # Austria — additional to willhaben (V7)
+  - id: ebay-at
+    country: AT
+    type: classifieds
+    base_url: https://www.ebay.at
+    crawl_enabled: false
+  - id: shpock-at
+    country: AT
+    type: classifieds
+    base_url: https://www.shpock.com
+    crawl_enabled: false
+  - id: fahrradmarkt-at
+    country: AT
+    type: classifieds
+    base_url: https://www.fahrradmarkt.at
+    crawl_enabled: false
+
+  # Accessories / wholesale (cross-border)
+  - id: bike-discount-de
+    country: DE
+    type: dealer_marketplace
+    base_url: https://www.bike-discount.de
+    crawl_enabled: false
+  - id: probikeshop-fr
+    country: FR
+    type: dealer_marketplace
+    base_url: https://www.probikeshop.fr
+    crawl_enabled: false
+  - id: fahrrad-xxl-de
+    country: DE
+    type: dealer_marketplace
+    base_url: https://www.fahrrad-xxl.de
+    crawl_enabled: false
+
+  # Swiss reference (not EU arbitrage — separate pipeline later)
+  - id: velomarkt-ch
+    country: CH
+    type: classifieds
+    base_url: https://www.velomarkt.ch
+    crawl_enabled: false
+  - id: ricardo-ch
+    country: CH
+    type: classifieds
+    base_url: https://www.ricardo.ch
+    crawl_enabled: false
+  - id: tutti-ch
+    country: CH
+    type: classifieds
+    base_url: https://www.tutti.ch
+    crawl_enabled: false
+  - id: velocorner-ch
+    country: CH
+    type: dealer_marketplace
+    base_url: https://www.velocorner.ch
+    crawl_enabled: false
+  - id: upway-ch
+    country: CH
+    type: refurbisher
+    base_url: https://upway.ch
+    crawl_enabled: false

@@ -1,0 +1,25 @@
+{
+  "sourceId": "a0000001-0000-0000-0000-000000000001",
+  "offers": [
+    {
+      "sourceOfferId": "sample-import-001",
+      "sourceUrl": "https://example.com/listing/sample-import-001",
+      "brand": "Cube",
+      "model": "Touring Hybrid ONE",
+      "modelYear": 2022,
+      "bikeCategory": "trekking",
+      "bikeCondition": "refurbished",
+      "motorBrand": "Bosch",
+      "motorPosition": "mid",
+      "batteryWh": 500,
+      "mileageKm": 800,
+      "warrantyType": "certified_refurb",
+      "warrantyMonths": 12,
+      "totalPriceLocal": 1899.0,
+      "currencyCode": "EUR",
+      "extractionMethod": "manual",
+      "images": ["https://placehold.co/640x400/png?text=Cube+Touring"],
+      "qualityScore": 8.0
+    }
+  ]
+}

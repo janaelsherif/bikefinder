@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bikeWish xmlns="https://patrickbike.ch/ns/wunschvelo/1" version="1">
+  <contact>
+    <email>kunde@example.ch</email>
+    <fullName>Max Muster</fullName>
+    <phone>+41 79 000 00 00</phone>
+    <preferredChannel>email</preferredChannel>
+  </contact>
+  <useCase>ebike</useCase>
+  <urgency>normal</urgency>
+  <budget>
+    <chfBand>2000-3500</chfBand>
+  </budget>
+  <eBike>
+    <specificity>open</specificity>
+    <motorPosition>mid</motorPosition>
+    <batteryWhMin>500</batteryWhMin>
+  </eBike>
+</bikeWish>

@@ -1,0 +1,96 @@
+spring:
+  application:
+    name: bikefinder-api
+  datasource:
+    url: jdbc:postgresql://${EBF_DB_HOST:localhost}:${EBF_DB_PORT:5433}/${EBF_DB_NAME:bikefinder}
+    username: ${EBF_DB_USER:bikefinder}
+    password: ${EBF_DB_PASSWORD:bikefinder}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    org.hibernate.SQL: warn
+
+ebf:
+  cors:
+    # Comma-separated. Set EBF_CORS_ORIGINS=https://YOUR-APP.vercel.app for production (browser → API).
+    allowed-origins: ${EBF_CORS_ORIGINS:http://localhost:3000,http://127.0.0.1:3000}
+    allow-credentials: true
+  admin:
+    import-token: ${EBF_IMPORT_TOKEN:}
+    # Localhost only: allow POST /api/v1/system/import-offers and /crawl/rebike without X-Import-Token.
+    dev-open-system-endpoints: ${EBF_DEV_OPEN_SYSTEM_ENDPOINTS:false}
+  search:
+    # Hide Flyway dev seed / demo rows from procurement search (set true to see them locally).
+    include-demo-listings: ${EBF_SEARCH_INCLUDE_DEMO_LISTINGS:false}
+    near-match-fallback: ${EBF_SEARCH_NEAR_FALLBACK:true}
+  staff:
+    # Optional: when set, GET /api/v1/offers and /wish require X-Staff-Token (Hamza-only API access).
+    api-token: ${EBF_STAFF_API_TOKEN:}
+  competitor-watch:
+    # Hamza “5 competitors” — HTTP snapshot + heuristic listing count (set true for weekly cron).
+    enabled: ${EBF_COMPETITOR_WATCH_ENABLED:false}
+    alert-delta-log-threshold: 5
+    cron: ${EBF_COMPETITOR_WATCH_CRON:0 0 8 * * MON}
+    zone: Europe/Zurich
+  crawl:
+    # Set EBF_CRAWL_ENABLED=true for scheduled + manual Rebike HTML crawl (robots.txt checked).
+    enabled: ${EBF_CRAWL_ENABLED:false}
+    user-agent: ${EBF_CRAWL_USER_AGENT:EuropeBikeFinderBot/0.1 (dev)}
+    delay-ms-between-requests: ${EBF_CRAWL_DELAY_MS:1500}
+    cron: ${EBF_CRAWL_CRON:0 0 3 * * *}
+    rebike:
+      storefront-base: https://rebike.com
+      seed-urls:
+        - https://www.rebike.de/
+      max-products-per-run: ${EBF_CRAWL_REBIKE_MAX:40}
+  pricesense:
+    # PatrickBike: Swiss median path when at least N CH listings in DB; else DE EUR→CHF×F_CH+A fallback.
+    swiss-min-listings: ${EBF_PRICESENSE_SWISS_MIN:5}
+    competitor-discount-multiplier: ${EBF_PRICESENSE_DISCOUNT_MULT:0.90}
+    margin-floor-multiplier: ${EBF_PRICESENSE_MARGIN_FLOOR_MULT:1.30}
+    swiss-premium-factor: ${EBF_PRICESENSE_F_CH:1.20}
+    import-allowance-chf: ${EBF_PRICESENSE_IMPORT_CHF:80}
+    year-tolerance: ${EBF_PRICESENSE_YEAR_TOL:1}
+    # On-demand live checks on competitor_watch_target shops (Shopify /search + JSON-LD). Set EBF_PRICESENSE_LIVE=true for fresh prices.
+    live-competitor-search:
+      enabled: ${EBF_PRICESENSE_LIVE:false}
+      timeout-seconds: ${EBF_PRICESENSE_LIVE_TIMEOUT:18}
+      min-successful-prices: ${EBF_PRICESENSE_LIVE_MIN_OK:1}
+      delay-ms-between-requests: ${EBF_PRICESENSE_LIVE_DELAY_MS:200}
+  pricing:
+    bargain-threshold-percent: 15
+    import-vat-threshold-chf: 150
+    import-vat-rate: 0.077
+    customs-handling-chf: 20
+    default-shipping-estimate-chf: 40
+  fx:
+    enabled: true
+    cron: "0 0 7 * * *"
+    zone: Europe/Zurich
+  mail:
+    # Set EBF_MAIL_ENABLED=true and spring.mail.* (or MAIL_*) for SMTP — see README.
+    enabled: ${EBF_MAIL_ENABLED:false}
+    from: ${EBF_MAIL_FROM:EuropeBikeFinder <noreply@localhost>}
+    api-base-url: ${EBF_MAIL_API_BASE_URL:http://localhost:8080}
+    digest-cron: ${EBF_MAIL_DIGEST_CRON:0 0 7 * * *}
+    digest-zone: ${EBF_MAIL_DIGEST_ZONE:Europe/Zurich}
