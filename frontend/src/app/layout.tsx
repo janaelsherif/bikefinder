@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "EuropeBikeFinder",
@@ -16,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="de-CH" suppressHydrationWarning>
-      <body className={inter.className}>
+    <html lang="de-CH" suppressHydrationWarning className={inter.variable}>
+      <body className={`${inter.className} font-sans`}>
         {children}
       </body>
     </html>

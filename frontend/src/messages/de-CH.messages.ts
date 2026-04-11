@@ -13,12 +13,17 @@ const deCH = {
     topDeal: "Top Deal",
     discountVsCh: "unter CH-Markt",
     toWunschSearch: "Nach Kundenwunsch suchen (Wunsch-Velo-Kriterien) →",
+    toSourcingDirectory: "B2B-Sourcing-Verzeichnis (Einkauf) →",
+    listingsHeading: "Aktuelle Angebote",
+    heroKicker: "Beschaffungs-Intelligence",
   },
   Nav: {
     brand: "EuropeBikeFinder",
     offers: "Angebote",
     wunschSearch: "Wunsch-Suche",
     competitivePricing: "Marktpreis",
+    competitorWatch: "Konkurrenz-Monitor",
+    sourcingDirectory: "Sourcing-Verzeichnis",
     language: "Sprache",
     locale_deCH: "Deutsch (CH)",
     locale_en: "English",
@@ -163,6 +168,142 @@ Haftung für Links: Trotz sorgfältiger inhaltlicher Kontrolle keine Haftung fü
     colLivePrice: "Listenpreis CHF",
     colLiveLink: "Inserat",
     colLiveError: "Hinweis",
+  },
+  CompetitorWatch: {
+    title: "Konkurrenz-Monitor",
+    subtitle:
+      "PatrickBike / Hamza — Modul 5: Veloplus, Upway, Rebike, BibiBike und Velocorner wöchentlich beobachten und frühe Signale aus automatischen Snapshots sichtbar machen.",
+    missionTitle: "Fragen dieses Moduls",
+    qInventory:
+      "Was haben Veloplus, Upway, Rebike und BibiBike diese Woche an Lagerbestand / neuen Inseraten dazugetan?",
+    qPricing: "Hat ein Wettbewerber seine Preislogik merklich geändert?",
+    qMarket:
+      "Kommen neue Anbieter im Markt für zertifizierte Occasion-Bikes in Basel / Zürich dazu?",
+    briefTitle: "Was zu beobachten ist (Hamza-Brief)",
+    colCompetitor: "Wettbewerber",
+    colMonitor: "Fokus",
+    colSource: "Quelle / Signal",
+    colAlert: "Alert (Zielbild)",
+    rowVeloplus: {
+      monitor: "Neue Occasion-Inserate, Preisänderungen, Garantie-Hinweise",
+      source: "Veloplus-Shopfront (HTTP-Snapshot; konsistent mit Occasions-Logik)",
+      alert: "≥5 neue Listings vs. vorheriger Lauf in überlappenden Kategorien (Heuristik)",
+    },
+    rowUpway: {
+      monitor: "CH-Sortiment, neue Marken, Aktionen",
+      source: "upway.ch Storefront-Snapshot",
+      alert: "Preissenkung >10 % bei gleichen Modellen (Preisreihe nötig — separat via DB / PriceSense)",
+    },
+    rowRebike: {
+      monitor: "CH-lieferbare Modelle, Markenbreite",
+      source: "rebike.ch Snapshot",
+      alert: "Sachliche Änderung bei CH-Lieferung / Sortiment (qualitativ; Site prüfen)",
+    },
+    rowBibibike: {
+      monitor: "Listings-Volumen, Preise bei gemeinsamen Marken",
+      source: "bibibike.ch Snapshot",
+      alert: "Klassifizierte Kampagnen (Ricardo/Tutti) — hier nicht automatisch erkannt",
+    },
+    rowVelocorner: {
+      monitor: "Händler-Inserate vs. PatrickBike-Overlap (Raum Basel)",
+      source: "velocorner.ch Marketplace-Snapshot",
+      alert: "Direktes Overlap ~10 km / PLZ — mit Geo-Filtern in der Beschaffung verfeinern",
+    },
+    nameVeloplus: "Veloplus Occasions",
+    nameUpway: "Upway CH",
+    nameRebike: "Rebike CH",
+    nameBibibike: "BibiBike",
+    nameVelocorner: "Velocorner",
+    signalsTitle: "Live-Signale aus dem System",
+    signalsHint:
+      "Pro Lauf wird die öffentliche Shopfront geladen (robots.txt beachtet), die sichtbare Inseratezahl geschätzt und die Differenz zum letzten Lauf gespeichert. Ein Hinweis-Badge erscheint, wenn die Änderung den konfigurierten Schwellwert erreicht (Standard 5), analog zu den Server-Logs.",
+    colLastSnapshot: "Letzter Snapshot",
+    colEstimate: "Inserate (Schätzung)",
+    colDelta: "Δ zum Vorlauf",
+    colHttp: "HTTP",
+    colDuration: "Dauer",
+    signalAlert: "Schwelle — prüfen",
+    signalCalm: "Im erwarteten Band",
+    openShop: "Shop öffnen",
+    noSnapshot:
+      "Noch keine Snapshots. Competitor-Watch auf der API aktivieren und einen Lauf auslösen (Cron oder manueller POST).",
+    error:
+      "Konkurrenz-Daten nicht ladbar. Läuft das Backend und ist ggf. X-Staff-Token gesetzt?",
+    historyTitle: "Letzte Snapshots",
+    historyWhen: "Zeit",
+    historyEstimate: "Anzahl",
+    historyDelta: "Δ",
+    technicalNote:
+      "Feinere Alerts aus dem Brief (z. B. −10 % Preis, Ricardo-Kampagnen, 10 km Overlap) brauchen zusätzliche Daten oder manuelle Prüfung; diese Seite zeigt die automatische Inserate-Telemetrie, die das Backend bereits speichert.",
+    aiBriefTitle: "KI-Konkurrenz-Brief (Claude + optional Perplexity)",
+    aiBriefHint:
+      "Erzeugt ein kurzes Markdown-Briefing aus den neuesten Snapshot-Daten. Optional: Fokus ergänzen (z. B. «Flyer in Basel»). Auf der API braucht es ANTHROPIC_API_KEY; PERPLEXITY_API_KEY liefert aktuellen Schweizer Marktkontext. Kein Telegram — nur Web.",
+    aiBriefFocusPlaceholder: "Optionaler Fokus für das Modell (Marke, Ort, Frage …)",
+    aiBriefButton: "Brief erzeugen",
+    aiBriefLoading: "Wird erzeugt…",
+    aiBriefError: "Brief fehlgeschlagen:",
+    aiBriefPerplexityNote: "Web-Kontext enthalten",
+    aiBriefNoPerplexityNote: "Perplexity übersprungen oder nicht verfügbar",
+  },
+  Sourcing: {
+    heroKicker: "Beschaffung",
+    title: "B2B-Sourcing-Verzeichnis (E-Bikes)",
+    subtitle:
+      "Referenzliste EU-Plattformen für die Beschaffung: Inserate, Refurbisher, Händler-Outlets und Hinweise zum B2B-Zugang. Links öffnen in einem neuen Tab. In-app-Listings stammen nur von konfigurierten Crawls — dieses Verzeichnis hilft bei der Einkaufsplanung.",
+    colPlatform: "Plattform",
+    colType: "Typ",
+    colPrice: "Preisspanne (EUR)",
+    colB2b: "B2B-Zugang",
+    colConfidence: "Vertrauen",
+    confHigh: "Hoch",
+    confMedium: "Mittel",
+    confLow: "Tief",
+    footnote:
+      "Benchmarks sind indikative Research-Spannen, keine Live-Quotes. Nutzungsbedingungen und robots.txt der Ziele beachten. Inseratsvolumen ≠ automatischer Import in diesem Produkt — siehe Scope-Dokument.",
+    regions: {
+      de: {
+        title: "Deutschland — Haupt-Beschaffungsmarkt",
+        intro:
+          "Markt Nr. 1 — rund 42 % des EU-E-Bike-Volumens; starke Überbestände 2023–2024 machen ihn zum zentralen Beschaffungsfeld.",
+        benchmark:
+          "DE-Benchmark (indikativ): Bosch Mittelmotor-Pendler, ~500 Wh, refurbished mit Garantie → oft EUR 1’400–2’200 (~CHF 1’550–2’450 landed — deutlich unter typischem CH-Retail).",
+      },
+      nl: {
+        title: "Niederlande — Volumen & Qualität",
+        intro:
+          "Hohe E-Bike-Durchdringung und ausgereifte Austauschzyklen — gut für nahezu-neue und Leasing-Rückläufer.",
+        benchmark:
+          "NL-Benchmark (indikativ): gleiche Klasse oft EUR 1’200–2’000 — teils unter DE durch Leasing-Rückläufer.",
+      },
+      fr: {
+        title: "Frankreich — Subventionen & Second-Hand",
+        intro:
+          "Subventionshistorie speist grossen Markt an Trade-ins und Outlet-Flow.",
+        benchmark:
+          "FR-Benchmark (indikativ): oft EUR 1’300–2’400 — häufig 20–30 % unter typischem CH-Retail vergleichbarer Klasse.",
+      },
+      it: {
+        title: "Italien — Urban & Classifieds",
+        intro:
+          "Grosser Privatmarkt und Händlerpräsenz; je nach Kategorie attraktiv vs. DE/NL.",
+        benchmark:
+          "IT-Benchmark (indikativ): oft EUR 1’000–1’900 — stark abhängig von Premium vs. Volumenmarken.",
+      },
+      at: {
+        title: "Österreich — nah an der CH",
+        intro:
+          "Gut für Logistik Richtung CH; solide Classifieds und Händler-Outlets.",
+        benchmark:
+          "AT-Benchmark (indikativ): oft EUR 1’300–2’300 — kleinerer Markt als DE, aber nah für CH-Sourcing.",
+      },
+      accessories: {
+        title: "Zubehör — Grosshandel & Outlets (Cross-Border)",
+        intro:
+          "Parallelquellen für Gepäckträger, Licht, Cargo usw. — ergänzend zur Velo-Beschaffung.",
+        benchmark:
+          "Dealer-/Pro-Konten wo möglich; MOQ und Exportbedingungen pro Lieferant prüfen.",
+      },
+    },
   },
   Alert: {
     title: "E-Mail-Benachrichtigung",

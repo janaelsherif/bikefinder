@@ -1,5 +1,7 @@
 # Deploying EuropeBikeFinder (GitHub + Vercel + API)
 
+**Scope & roadmap (keep updated):** **[docs/SCOPE_AND_PHASE2.md](./docs/SCOPE_AND_PHASE2.md)**
+
 This repo is a **monorepo**: **Next.js** (`frontend/`) + **Spring Boot** (`backend/`).  
 **Vercel only runs the Next.js app.** The API and PostgreSQL must run somewhere else (Render, Railway, Fly.io, a VPS, or your college’s server).
 
@@ -45,6 +47,21 @@ Provision **PostgreSQL 14+** (Neon, Supabase, Railway Postgres, AWS RDS, etc.). 
 | `EBF_STAFF_API_TOKEN` | Random secret; same value in Vercel as `EBF_STAFF_API_TOKEN` for server-side API calls |
 | `EBF_IMPORT_TOKEN` | Protects import/crawl system endpoints |
 | `EBF_MAIL_ENABLED`, `SPRING_MAIL_*` | If you use email alerts |
+| `EBF_COMPETITOR_WATCH_ENABLED` | Set `true` if you want **daily** competitor snapshots (default schedule **08:00 Europe/Zurich**; override with `EBF_COMPETITOR_WATCH_CRON` if needed) |
+| `EBF_CRAWL_ENABLED` | Set `true` if you want the **scheduled marketplace crawl** (see `application.yml` for timing) |
+
+**Optional — AI competitor brief (Module 5, no Telegram)**
+
+Not required for launch. The app deploys fine without these; the **Generate brief** button on **`/competitor-watch`** stays disabled until the API has a Claude key.
+
+| Variable | Purpose |
+|----------|---------|
+| `ANTHROPIC_API_KEY` | **Required** for `POST /api/v1/competitor-watch/brief` and the UI brief. Set on the **API only** (not Vercel). |
+| `ANTHROPIC_MODEL` | Optional override; default in `application.yml` is `claude-3-5-sonnet-20241022`. |
+| `PERPLEXITY_API_KEY` | Optional; adds web-grounded Swiss market context before Claude. |
+| `PERPLEXITY_MODEL` | Optional; default `sonar`. |
+
+After setting keys, **restart the API**. Keys are documented in repo root `.env.example` (`ebf.llm` in `application.yml`).
 
 **Never enable in production**
 
@@ -67,7 +84,7 @@ Provision **PostgreSQL 14+** (Neon, Supabase, Railway Postgres, AWS RDS, etc.). 
 |------|---------|
 | `NEXT_PUBLIC_API_BASE_URL` | `https://your-api.onrender.com` (public URL of Spring Boot, **no** trailing slash) |
 | `EBF_STAFF_API_TOKEN` | Same as backend `EBF_STAFF_API_TOKEN` if you use staff-protected APIs |
-| `STAFF_UI_PASSWORD` | Optional; gates `/suche` and `/competitive-pricing` in the browser |
+| `STAFF_UI_PASSWORD` | Optional; gates **`/suche`**, **`/competitive-pricing`**, **`/competitor-watch`**, and **`/sourcing`** in the browser |
 
 `NEXT_PUBLIC_*` is embedded at **build time**. After changing it, **redeploy** on Vercel.
 
@@ -75,20 +92,30 @@ Provision **PostgreSQL 14+** (Neon, Supabase, Railway Postgres, AWS RDS, etc.). 
 
 ---
 
-## 5. Optional: scheduled jobs on the API host
+## 5. Scheduled jobs (API host must stay running)
 
-If you use **Rebike crawl**, **competitor watch**, **FX**, **mail digest**, the Spring process must stay **always on** (not serverless). A small VM or Render/Railway **web service** is appropriate.
+**FX, crawls, competitor watch** all run **inside Spring Boot**. The Vercel site does **not** run these. Use a **long-running** API deployment (VM, Render/Railway/Fly **web service**, etc.).
+
+- **Competitor Watch:** set `EBF_COMPETITOR_WATCH_ENABLED=true` on the API. Default: **daily 08:00** `Europe/Zurich` (cron in `application.yml`). First snapshots appear after the first run; optional manual trigger: `POST /api/v1/system/competitor-watch/run` (same auth rules as other system endpoints — see README).
+- **AI brief (Claude / Perplexity):** optional; see **§3** table *Optional — AI competitor brief*. Snapshots work without LLM keys; brief generation needs `ANTHROPIC_API_KEY` on the API.
+- **Crawls:** optional; enable with `EBF_CRAWL_ENABLED` and tokens as documented in README / `docs/CRAWL_RUNBOOK.md`.
 
 ---
 
-## 6. Checklist (“nothing off” for class demo)
+## 6. Checklist before you call it done
 
-- [ ] API health returns UP.
-- [ ] `NEXT_PUBLIC_API_BASE_URL` points to that API on **Production** Vercel env.
+- [ ] API health returns UP (`/actuator/health`).
+- [ ] `NEXT_PUBLIC_API_BASE_URL` points to that API on **Production** Vercel env (redeploy after changing it).
 - [ ] `EBF_CORS_ORIGINS` includes your Vercel URL(s).
-- [ ] DB reachable from API; Flyway completed.
-- [ ] Open `https://YOUR-VERCEL-APP.vercel.app/de-CH` — listings load if DB has data (run Rebike crawl or import on the API side).
-- [ ] No dev-only flags enabled in production (`EBF_DEV_OPEN_SYSTEM_ENDPOINTS`, etc.).
+- [ ] DB reachable from API; Flyway completed on first boot.
+- [ ] If you use staff features: `EBF_STAFF_API_TOKEN` matches between API and Vercel; optional `STAFF_UI_PASSWORD` set if you want the browser gate.
+- [ ] Open `https://YOUR-VERCEL-APP.vercel.app/de-CH` — listings appear once the DB has data (run an import/crawl from the API side if empty).
+- [ ] If you want **Competitor Watch** live: `EBF_COMPETITOR_WATCH_ENABLED=true` on the API (see §5).
+- [ ] **(Optional)** If Patrick wants the **AI competitor brief** on **`/competitor-watch`**: set `ANTHROPIC_API_KEY` (and optionally `PERPLEXITY_API_KEY`) on the **API** host, then restart the API. Skip on first deploy if you are not ready — everything else works without these keys.
+- [ ] No dev-only flags in production (`EBF_DEV_OPEN_SYSTEM_ENDPOINTS`, etc.).
+- [ ] Read **[docs/SCOPE_AND_PHASE2.md](./docs/SCOPE_AND_PHASE2.md)** so scope and Phase 2 expectations are clear.
+
+**Local parity with CI:** from repo root, `./scripts/verify-build.sh` (same as GitHub Actions).
 
 ---
 

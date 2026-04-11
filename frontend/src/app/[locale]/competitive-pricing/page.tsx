@@ -60,13 +60,13 @@ export default async function CompetitivePricingPage() {
 
   return (
     <PageShell>
-      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         <DisclaimerStrip />
-        <header className="mb-8">
-          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">
+        <header className="mb-10 rounded-2xl border border-zinc-200/80 bg-white/90 p-8 shadow-card backdrop-blur-sm sm:p-10">
+          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
             {t("title")}
           </h1>
-          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-zinc-600">
+          <p className="mt-3 max-w-3xl text-base leading-relaxed text-zinc-600">
             {t("subtitle")}
           </p>
         </header>

@@ -1,5 +1,5 @@
 -- Full B2B sourcing directory (Hamza procurement). Matches config/sourcing-sources.yaml.
--- crawl_enabled = false until robots.txt + ToS sign-off per site.
+-- crawl_enabled = false until robots.txt verified per site.
 
 INSERT INTO source (id, name, country_code, type, base_url, crawl_enabled, refresh_interval_min, robots_compliant, created_at, updated_at)
 VALUES

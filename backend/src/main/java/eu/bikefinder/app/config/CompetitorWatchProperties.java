@@ -13,8 +13,8 @@ public class CompetitorWatchProperties {
     /** Log at WARN when absolute delta vs previous snapshot exceeds this (inventory signal). */
     private int alertDeltaLogThreshold = 5;
 
-    /** Monday 08:00 Zurich — align with VeloIntel-style weekly digest; override via env. */
-    private String cron = "0 0 8 * * MON";
+    /** Daily 08:00 Zurich — override with {@code ebf.competitor-watch.cron} or {@code EBF_COMPETITOR_WATCH_CRON}. */
+    private String cron = "0 0 8 * * ?";
 
     private String zone = "Europe/Zurich";
 

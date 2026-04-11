@@ -4,16 +4,15 @@ import java.net.URI;
 import java.util.Locale;
 
 /**
- * www.rebike.de links and HTTP redirects often point at {@code /de/products/...}, which returns
- * 404 for server-side GETs. Canonical product pages live at {@code https://rebike.com/products/...}
- * (no locale prefix).
+ * Normalizes Shopify product links to the configured storefront host: strips locale path segments
+ * (e.g. {@code /de/products/...} → {@code /products/...}) and ignores non-product paths.
  */
-public final class RebikeUrlCanonicalizer {
+public final class ShopifyUrlCanonicalizer {
 
-    private RebikeUrlCanonicalizer() {}
+    private ShopifyUrlCanonicalizer() {}
 
     /**
-     * Returns canonical absolute product URL on the Shopify storefront, or null if not a product path.
+     * Returns canonical absolute product URL on the configured Shopify storefront, or null if not a product path.
      */
     public static String canonicalProductUrl(String storefrontBase, String href) {
         if (href == null || href.isBlank()) {
@@ -51,7 +50,10 @@ public final class RebikeUrlCanonicalizer {
         if (normalized.length() <= "/products/".length()) {
             return null;
         }
-        String base = storefrontBase.endsWith("/") ? storefrontBase.substring(0, storefrontBase.length() - 1) : storefrontBase;
+        String base =
+                storefrontBase.endsWith("/")
+                        ? storefrontBase.substring(0, storefrontBase.length() - 1)
+                        : storefrontBase;
         return base + normalized.toLowerCase(Locale.ROOT);
     }
 }

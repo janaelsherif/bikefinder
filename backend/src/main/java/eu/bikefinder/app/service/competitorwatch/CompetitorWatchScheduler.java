@@ -7,8 +7,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * Weekly competitor snapshot when {@code ebf.competitor-watch.enabled=true}. Uses same robots + UA as
- * other crawls.
+ * Scheduled competitor snapshot when {@code ebf.competitor-watch.enabled=true} (default: daily 08:00
+ * Europe/Zurich). Uses same robots + UA as other crawls.
  */
 @Component
 public class CompetitorWatchScheduler {

@@ -16,7 +16,9 @@ Price-intelligence platform for Swiss buyers: crawls EU e-bike listings, compute
 | `backend/` | Java 21, Spring Boot 3.3, Flyway, JPA |
 | `frontend/` | Next.js 14 (App Router), Tailwind, next-intl — URLs **`/de-CH/…`** (default) and **`/en/…`** (language switcher) |
 
-**Deploy (GitHub + Vercel + API):** Vercel runs **`frontend/`** only; the API + PostgreSQL need a separate host. **[DEPLOY.md](./DEPLOY.md)** · **`frontend/.env.production.example`** · Docker image: **`backend/Dockerfile`** · Render blueprint: **[infra/render.yaml](./infra/render.yaml)** · local CI parity: **`./scripts/verify-build.sh`** · first push: **[docs/SHIP_TO_GITHUB.md](./docs/SHIP_TO_GITHUB.md)**.
+**Deploy (GitHub + Vercel + API):** Vercel runs **`frontend/`** only; the API + PostgreSQL need a separate host. **[DEPLOY.md](./DEPLOY.md)** · **[docs/SCOPE_AND_PHASE2.md](./docs/SCOPE_AND_PHASE2.md)** (V1 scope, limitations, Phase 2 roadmap — **keep updated**) · **`frontend/.env.production.example`** · Docker: **`backend/Dockerfile`** · Render: **[infra/render.yaml](./infra/render.yaml)** · CI: **`./scripts/verify-build.sh`** (same as GitHub Actions).
+
+**First push to GitHub:** use **`europe-bikefinder/`** as the repo root (not your home folder). Then `git init`, `git add -A`, verify no secrets in `git status`, commit, add `origin`, `git push -u origin main`. Run **`./scripts/verify-build.sh`** before or after push.
 
 ### Implemented in backend (beyond CRUD)
 
@@ -51,7 +53,11 @@ chmod +x start-frontend.sh
 
 Open **http://localhost:3000** (redirects to **`/de-CH`**). By default the UI **hides Flyway demo listings** (`bike_offer.is_demo`), so the home page can look **empty until you import real rows**. **Wunsch-Suche:** e.g. http://localhost:3000/de-CH/suche or http://localhost:3000/en/suche
 
-### Load real listings (Rebike crawl — recommended)
+### Load real listings (Shopify crawl)
+
+**Operations:** see **`docs/CRAWL_RUNBOOK.md`** (includes **non-Shopify + classifieds** status). **Robots quick check:** `./scripts/verify-crawl-robots.sh`. **Smoke Shopify batch:** `./scripts/smoke-crawl-shopify.sh`. **Full marketplace (Shopify + heuristics + skips):** `POST /api/v1/system/crawl/marketplace-all`.
+
+### Load real listings (Rebike-only — legacy shorthand)
 
 This fills Postgres with **live** `rebike.de` product pages (JSON-LD), priced in CHF via ECB FX. Needs **internet** and **~1–2 minutes**.
 
@@ -67,7 +73,7 @@ This fills Postgres with **live** `rebike.de` product pages (JSON-LD), priced in
 
 **Shorthand:** same crawl as step 3 without the health wait: **`./scripts/rebike-crawl-local.sh`**.
 
-**Production / staging:** do **not** set `EBF_DEV_OPEN_SYSTEM_ENDPOINTS`. Use **`EBF_IMPORT_TOKEN`** and pass **`X-Import-Token`** to the crawl endpoint (or automate imports from your own pipeline). Keep **`robots.txt`** / terms compliance in mind for the target shop.
+**Production / staging:** do **not** set `EBF_DEV_OPEN_SYSTEM_ENDPOINTS`. Use **`EBF_IMPORT_TOKEN`** and pass **`X-Import-Token`** to the crawl endpoint (or automate imports from your own pipeline). Respect **`robots.txt`** for the target shop.
 
 **Keep data fresh:** set **`EBF_CRAWL_ENABLED=true`** so the scheduled job in `ebf.crawl.cron` runs (see `application.yml`). Manual crawl still works via `POST /api/v1/system/crawl/rebike` regardless of that flag.
 
@@ -77,7 +83,7 @@ This fills Postgres with **live** `rebike.de` product pages (JSON-LD), priced in
 - Wish search API: http://localhost:8080/api/v1/offers/wish (strict + near-match fallback)  
 - Offers (filterable): http://localhost:8080/api/v1/offers — e.g. `?bikeCategory=city&maxLandedPriceChf=3000&brand=Specialized`  
 - Similar (no embeddings): `GET /api/v1/offers/{uuid}/similar` — e.g. after you have listing UUIDs from `/offers`
-- **Competitor watch (Hamza 5):** `GET /api/v1/competitor-watch/dashboard` and `GET /api/v1/competitor-watch/history/{slug}` — weekly snapshot when **`EBF_COMPETITOR_WATCH_ENABLED=true`** (Monday 08:00 Zurich). Manual: **`POST /api/v1/system/competitor-watch/run`** (same **`X-Import-Token`** / dev-open rules as import). Heuristic **listing-link count** on each shop URL + delta vs last run; **not** “new listings this week” until you add stable product-ID diffing.  
+- **Competitor watch (Hamza 5):** UI at **`/competitor-watch`**; API `GET /api/v1/competitor-watch/dashboard` and `GET /api/v1/competitor-watch/history/{slug}` — when **`EBF_COMPETITOR_WATCH_ENABLED=true`**, default **daily 08:00 Europe/Zurich** (see `ebf.competitor-watch` in `application.yml`). Manual: **`POST /api/v1/system/competitor-watch/run`** (same **`X-Import-Token`** / dev-open rules as import). Heuristic **listing-link count** on each shop URL + delta vs last run; **not** “new listings this week” until you add stable product-ID diffing. Scope / Phase 2: **[docs/SCOPE_AND_PHASE2.md](./docs/SCOPE_AND_PHASE2.md)**.  
 - **Procurement sources** (B2B directory seeds): http://localhost:8080/api/v1/sources — also see `config/sourcing-sources.yaml`  
 - Wunsch persist (optional): `POST http://localhost:8080/api/v1/bike-wishes` (JSON: `contactEmail`, optional name/phone, `payload` = Wunsch-shaped profile)  
 - Alerts: `POST http://localhost:8080/api/v1/alert-subscriptions` — `{ "email", "filter": { … }, "locale" }` (optional SMTP: `ebf.mail.*`).  
@@ -133,7 +139,7 @@ This fills Postgres with **live** `rebike.de` product pages (JSON-LD), priced in
 
 ## Open risks (from dev spec)
 
-- Verify each source’s `robots.txt` / terms before crawling.
+- Verify each source’s `robots.txt` before crawling.
 - Landed price / import lines are **Schätzungen** — label in UI; verify customs rules at ezv.admin.ch.
 
 ---
@@ -147,8 +153,8 @@ The following is **implemented in-repo**; several items remain **out of scope** 
 | **Legal / UX** | de-CH + en pages **`/privacy`**, **`/imprint`**, footer links, disclaimer strip (estimates / customs hint). |
 | **Price alerts** | Table `price_alert_subscription`, **`POST /api/v1/alert-subscriptions`** (e-mail + `filter` JSON). Optional **SMTP**: `EBF_MAIL_ENABLED=true`, **`spring.mail.host`** (e.g. `MAIL_HOST`), **`ebf.mail.api-base-url`** for unsubscribe links; welcome mail on subscribe; **daily digest** (`ebf.mail.digest-cron`); **`GET /api/v1/alert-subscriptions/unsubscribe?token=…`**. |
 | **Bulk import (dev/ops)** | **`POST /api/v1/system/import-offers`** with header **`X-Import-Token`** when **`EBF_IMPORT_TOKEN`** is set. Body: `{ "sourceId": "uuid", "offers": [ … ] }`. Sample: `backend/src/main/resources/fixtures/import-sample.json`. |
-| **Sources catalogue** | Flyway **V7** seeds extra `source` rows (crawl **off** until legal review). |
-| **Rebike crawl** | HTML discovery + `rebike.com` product pages + JSON-LD `Product`; `RobotsAllowService`; scheduled when **`EBF_CRAWL_ENABLED=true`**; manual **`POST /api/v1/system/crawl/rebike`** with **`X-Import-Token`** (same as import). |
+| **Sources catalogue** | Flyway **V7** seeds extra `source` rows (crawl **off** until enabled in DB / robots checked). |
+| **Shopify crawls** | Same pipeline for Rebike, Upway (DE/NL/FR/CH), LikedBikes, Rebike CH — see `ebf.crawl` in `application.yml`. Manual **`POST /api/v1/system/crawl/shopify-all`** or per-endpoint; scheduled when **`EBF_CRAWL_ENABLED=true`**. |
 | **Import pipeline** | `BikeOffer.createImported` + `OfferImportService` + repricing via `PricingService`. |
 | **PriceSense (PatrickBike)** | **`POST /api/v1/price-sense/recommend`** — competitive **list price**: optional **on-demand live checks** on `competitor_watch_target` shops (Shopify-style `/search` → product JSON-LD) when **`EBF_PRICESENSE_LIVE=true`** (`ebf.pricesense.live-competitor-search.*`); else median from **`bike_offer`** (CH if **≥ N** rows, else DE EUR→CHF fallback). Then **10% below** (configurable) + **30% margin floor** on buy-in. UI shows per-shop live rows. Flyway **V15** adds `live_price_probe_enabled`. Same **`X-Staff-Token`** when **`EBF_STAFF_API_TOKEN`** is set. |
 
@@ -156,12 +162,12 @@ The following is **implemented in-repo**; several items remain **out of scope** 
 
 - **`GET /api/v1/offers/wish`**: strict filters on `bike_offer`; if nothing matches and **`ebf.search.near-match-fallback`** is true, a **relaxed** query runs (wider price, mileage, no category/condition/motor-position, etc.).
 - **Demo listings**: Flyway dev seed row is flagged **`bike_offer.is_demo`**; hidden from search unless **`EBF_SEARCH_INCLUDE_DEMO_LISTINGS=true`**.
-- **Optional API lock**: set **`EBF_STAFF_API_TOKEN`** — then **`X-Staff-Token`** (or `Authorization: Bearer`) is required for **`GET /api/v1/offers`**, **`/offers/wish`**, and **`POST /api/v1/price-sense/recommend`**. Set the same value in **`frontend/.env.local`** as **`EBF_STAFF_API_TOKEN`** for server-side fetches.
+- **Optional API lock**: set **`EBF_STAFF_API_TOKEN`** — then **`X-Staff-Token`** (or `Authorization: Bearer`) is required for **`GET /api/v1/offers`**, **`/offers/wish`**, **`POST /api/v1/price-sense/recommend`**, and **`/api/v1/competitor-watch/*`**. Set the same value in **`frontend/.env.local`** as **`EBF_STAFF_API_TOKEN`** for server-side fetches.
 - **Optional UI gate for `/suche`**: set **`STAFF_UI_PASSWORD`** in the Next.js env; users hit **`/{locale}/staff-login`** first (httpOnly cookie).
 
 ### Still not done here (needs separate effort)
 
-- **VeloIntel-class intelligence** (DataForSEO, LLMLayer, Claude weekly narrative, Ricardo API keys, geo modules) — **not** this repo; competitor watch here is **HTTP snapshots + heuristics** only.
+- **Full VeloIntel spec** (DataForSEO, weekly Monday e-mail digest, Ricardo API harvest, geo/brand/accessories/SEO modules, LLMLayer) — **not** this repo. **Competitor Watch** here remains **HTTP snapshots + heuristics**; optionally **`POST /api/v1/competitor-watch/brief`** ( **`ANTHROPIC_API_KEY`**, optional **`PERPLEXITY_API_KEY`**) generates an on-demand Markdown brief in the **Module 5** UI — **no Telegram**.
 - **Production crawlers** beyond Rebike: **one adapter per marketplace** (Kleinanzeigen, Upway, eBay, Swiss portals, …), rate limits, deduplication at scale — Rebike remains the reference implementation. Source rows for Grüne Welle, Ricardo CH, Tutti, Velocorner, Upway CH are **seeded** (`crawl_enabled: false`) in Flyway **V13** + `config/sourcing-sources.yaml`.
 - **Production SMTP** for alerts (set `EBF_MAIL_ENABLED=true` and `spring.mail.*` / `MAIL_*`); digests are scheduled daily (configurable). Unsubscribe: `GET /api/v1/alert-subscriptions/unsubscribe?token=…` (link in digest e-mails).
 - **End-user auth** (magic link) and `bf_user` UI; **saved_search** tied to users (tables exist in V1; API/UI not wired).

@@ -18,7 +18,7 @@ This file consolidates handover material from **B2B BIKE Sourcing Directory**, *
 
 ## 2. Hamza / procurement — crawl-ready URLs by country
 
-From **B2B BIKE Sourcing Directory** (confidence HIGH unless noted). **Canonical machine-readable list:** `config/sourcing-sources.yaml` (same content seeded into DB `source` via Flyway **V7–V8**). **always verify `robots.txt` and terms** before production crawl.
+From **B2B BIKE Sourcing Directory** (confidence HIGH unless noted). **Canonical machine-readable list:** `config/sourcing-sources.yaml` (same content seeded into DB `source` via Flyway **V7–V8**). **always verify `robots.txt`** before production crawl.
 
 **API:** `GET /api/v1/sources` lists all rows (name, `country_code`, `type`, `base_url`, `crawl_enabled`) for crawler wiring.
 

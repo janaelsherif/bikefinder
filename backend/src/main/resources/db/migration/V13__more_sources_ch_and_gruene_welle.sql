@@ -1,5 +1,5 @@
 -- Grüne Welle (DE) + Swiss marketplace catalogue rows for future PriceSense / CH pipelines.
--- crawl_enabled = false until robots.txt + terms are verified per site.
+-- crawl_enabled = false until robots.txt is verified per site.
 
 INSERT INTO source (id, name, country_code, type, base_url, crawl_enabled, refresh_interval_min, robots_compliant, created_at, updated_at)
 VALUES

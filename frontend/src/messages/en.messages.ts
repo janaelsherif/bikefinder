@@ -13,12 +13,17 @@ const en = {
     topDeal: "Top deal",
     discountVsCh: "below CH market",
     toWunschSearch: "Search by client wish (wish-bike criteria) →",
+    toSourcingDirectory: "B2B sourcing directory (where to buy) →",
+    listingsHeading: "Latest listings",
+    heroKicker: "Procurement intelligence",
   },
   Nav: {
     brand: "EuropeBikeFinder",
     offers: "Listings",
     wunschSearch: "Wish search",
     competitivePricing: "Competitive pricing",
+    competitorWatch: "Competitor watch",
+    sourcingDirectory: "Sourcing directory",
     language: "Language",
     locale_deCH: "German (CH)",
     locale_en: "English",
@@ -163,6 +168,141 @@ Liability for links: no responsibility for external content.`,
     colLivePrice: "List price CHF",
     colLiveLink: "Listing",
     colLiveError: "Note",
+  },
+  CompetitorWatch: {
+    title: "Competitor Watch",
+    subtitle:
+      "PatrickBike / Hamza — Module 5: track what Veloplus, Upway, Rebike, BibiBike, and Velocorner do each week, and surface early signals from automated snapshots.",
+    missionTitle: "Questions this module answers",
+    qInventory:
+      "What did Veloplus, Upway, Rebike, and BibiBike add to their inventory this week?",
+    qPricing: "Did any competitor change their pricing strategy?",
+    qMarket:
+      "Are new players entering the Basel / Zürich certified pre-owned market?",
+    briefTitle: "What to monitor (Hamza brief)",
+    colCompetitor: "Competitor",
+    colMonitor: "What to monitor",
+    colSource: "Source / signal",
+    colAlert: "Alert trigger (intent)",
+    rowVeloplus: {
+      monitor: "New occasion listings, price changes, warranty updates",
+      source: "Veloplus shop front (HTTP snapshot; aligned with occasions feed)",
+      alert: "≥5 new listings vs prior snapshot in overlapping categories (count heuristic)",
+    },
+    rowUpway: {
+      monitor: "Swiss inventory, new brands, promotions",
+      source: "upway.ch storefront snapshot",
+      alert: "Price drop >10% on overlapping models (needs price series — use DB + PriceSense separately)",
+    },
+    rowRebike: {
+      monitor: "CH-deliverable inventory, brand range",
+      source: "rebike.ch snapshot",
+      alert: "Material change in Swiss delivery / assortment (qualitative; review site copy)",
+    },
+    rowBibibike: {
+      monitor: "Listing volume, pricing on shared brands",
+      source: "bibibike.ch snapshot",
+      alert: "Spike in third-party classifieds noise (Ricardo/Tutti) — not auto-detected here",
+    },
+    rowVelocorner: {
+      monitor: "Dealer listings vs PatrickBike overlap (Basel area)",
+      source: "velocorner.ch marketplace snapshot",
+      alert: "Direct overlap within ~10 km / same PLZ band — refine with geo filters in sourcing",
+    },
+    nameVeloplus: "Veloplus Occasions",
+    nameUpway: "Upway CH",
+    nameRebike: "Rebike CH",
+    nameBibibike: "BibiBike",
+    nameVelocorner: "Velocorner",
+    signalsTitle: "Live signals from the engine",
+    signalsHint:
+      "Each run fetches the public shop front (robots.txt respected), estimates visible listing count, and stores the delta vs the previous run. A highlighted badge appears when the absolute change reaches the configured threshold (default 5), matching server-side logging.",
+    colLastSnapshot: "Last snapshot",
+    colEstimate: "Listing count (estimate)",
+    colDelta: "Δ vs previous",
+    colHttp: "HTTP",
+    colDuration: "Duration",
+    signalAlert: "Threshold crossed — review",
+    signalCalm: "Within normal band",
+    openShop: "Open shop",
+    noSnapshot: "No snapshots yet. Enable competitor-watch on the API and run a snapshot (scheduled or manual POST).",
+    error:
+      "Could not load competitor watch data. Is the backend running and is X-Staff-Token configured if required?",
+    historyTitle: "Recent snapshot history",
+    historyWhen: "When",
+    historyEstimate: "Count",
+    historyDelta: "Δ",
+    technicalNote:
+      "Narrow alerts from the brief (e.g. −10% price, Ricardo campaigns, 10 km overlap) require extra feeds or manual review; this page exposes the automated listing-count telemetry your backend already records.",
+    aiBriefTitle: "AI competitor brief (Claude + optional Perplexity)",
+    aiBriefHint:
+      "Generates a short Markdown briefing from the latest snapshot data. Optional: add a focus (e.g. “Flyer in Basel”). Requires ANTHROPIC_API_KEY on the API; PERPLEXITY_API_KEY adds recent Swiss market context. No Telegram — web only.",
+    aiBriefFocusPlaceholder: "Optional focus for the model (brand, city, question…)",
+    aiBriefButton: "Generate brief",
+    aiBriefLoading: "Generating…",
+    aiBriefError: "Brief failed:",
+    aiBriefPerplexityNote: "Web context included",
+    aiBriefNoPerplexityNote: "Perplexity skipped or unavailable",
+  },
+  Sourcing: {
+    heroKicker: "Procurement",
+    title: "B2B BIKE sourcing directory",
+    subtitle:
+      "Reference list of EU platforms for procurement: classifieds, refurbishers, dealer outlets, and B2B access notes. Links open in a new tab. In-app listings come from configured crawls only — use this page to plan where to source next.",
+    colPlatform: "Platform",
+    colType: "Type",
+    colPrice: "Price range (EUR)",
+    colB2b: "B2B access",
+    colConfidence: "Confidence",
+    confHigh: "High",
+    confMedium: "Medium",
+    confLow: "Low",
+    footnote:
+      "Benchmarks are indicative research ranges, not live quotes. Respect each site’s terms and robots.txt. Classifieds volume ≠ automated import in this product — see scope doc.",
+    regions: {
+      de: {
+        title: "Germany — primary sourcing market",
+        intro:
+          "Germany is the #1 target market — roughly 42% of Europe’s e-bike volume; significant overstock pressure in 2023–2024 makes it a rich hunting ground for procurement.",
+        benchmark:
+          "DE price benchmark (indicative): Bosch mid-drive commuter, ~500 Wh, refurbished with warranty → often EUR 1,400–2,200 (~CHF 1,550–2,450 landed — large saving vs typical Swiss retail).",
+      },
+      nl: {
+        title: "Netherlands — volume & quality hub",
+        intro:
+          "High e-bike penetration and mature replacement cycles — useful for near-new and lease-return style inventory.",
+        benchmark:
+          "NL benchmark (indicative): same class often EUR 1,200–2,000 — sometimes below DE due to lease-return volume.",
+      },
+      fr: {
+        title: "France — subsidy-driven secondary supply",
+        intro:
+          "Strong subsidy history created a large pool of trade-ins and outlet flow on the secondary market.",
+        benchmark:
+          "FR benchmark (indicative): often EUR 1,300–2,400 — still often 20–30% below typical CH retail for comparable class.",
+      },
+      it: {
+        title: "Italy — urban mobility & classifieds depth",
+        intro:
+          "Large private market and dealer presence; can be cost-effective for certain categories vs DE/NL.",
+        benchmark:
+          "IT benchmark (indicative): often EUR 1,000–1,900 for comparable segments — varies by premium vs volume brands.",
+      },
+      at: {
+        title: "Austria — close to Switzerland",
+        intro:
+          "Strong for pickup logistics toward CH; fewer refurb specialists but good classifieds and dealer outlets.",
+        benchmark:
+          "AT benchmark (indicative): often EUR 1,300–2,300 — smaller market than DE but useful for CH-adjacent sourcing.",
+      },
+      accessories: {
+        title: "Accessories — wholesale & outlets (cross-border)",
+        intro:
+          "Parallel sources for racks, lights, cargo, and dealer accessory volume — complement bike sourcing.",
+        benchmark:
+          "Use dealer/pro accounts where available; verify MOQ and export terms per supplier.",
+      },
+    },
   },
   Alert: {
     title: "Email alerts",

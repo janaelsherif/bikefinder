@@ -1,10 +1,10 @@
 # Hamza / procurement — B2B BIKE Sourcing Directory (canonical seeds for EuropeBikeFinder).
-# Mirrors docs/PATRICK_WUNSCH_AND_SOURCES.md §2. All crawl_enabled: false until robots.txt + ToS review.
+# Mirrors docs/PATRICK_WUNSCH_AND_SOURCES.md §2. All crawl_enabled: false until robots.txt verified.
 # Existing dev seed: Rebike DE (Flyway V3) — do not duplicate that row in DB.
 
 version: 1
 notes:
-  - "Verify robots.txt and site terms before enabling crawl_enabled."
+  - "Verify robots.txt before enabling crawl_enabled."
   - "Import / landed CHF logic applies to EU listings; CH sources (e.g. velomarkt.ch) need separate pricing rules."
 
 sources:
@@ -44,6 +44,7 @@ sources:
     type: refurbisher
     base_url: https://www.likedbikes.com
     crawl_enabled: false
+  # Domain may be outdated/parked — confirm live URL before any crawl; update Flyway source row if needed.
   - id: gruene-welle-de
     country: DE
     type: dealer_marketplace

@@ -28,10 +28,14 @@ export async function WunschSearchForm({
     <form
       method="get"
       action={formAction}
-      className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-6"
+      className="rounded-2xl border border-zinc-200/90 bg-white/95 p-5 shadow-card backdrop-blur-sm sm:p-8"
     >
-      <h2 className="mb-1 text-lg font-semibold text-zinc-900">{t("title")}</h2>
-      <p className="mb-6 text-sm text-zinc-600">{t("subtitle")}</p>
+      <h2 className="mb-2 text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl">
+        {t("title")}
+      </h2>
+      <p className="mb-8 max-w-3xl text-sm leading-relaxed text-zinc-600 sm:text-base">
+        {t("subtitle")}
+      </p>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <label className="flex flex-col gap-1">
@@ -40,7 +44,7 @@ export async function WunschSearchForm({
             name="brand"
             defaultValue={v("brand")}
             placeholder={t("phBrand")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400/25"
           />
         </label>
         <label className="flex flex-col gap-1">
@@ -49,7 +53,7 @@ export async function WunschSearchForm({
             name="model"
             defaultValue={v("model")}
             placeholder={t("phModel")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400/25"
           />
         </label>
         <label className="flex flex-col gap-1">
@@ -57,7 +61,7 @@ export async function WunschSearchForm({
           <select
             name="bikeCategory"
             defaultValue={v("bikeCategory")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400/25"
           >
             <option value="">{t("any")}</option>
             <option value="city">{t("catCity")}</option>
@@ -74,7 +78,7 @@ export async function WunschSearchForm({
           <select
             name="bikeCondition"
             defaultValue={v("bikeCondition")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400/25"
           >
             <option value="">{t("any")}</option>
             <option value="new">{t("condNew")}</option>
@@ -89,7 +93,7 @@ export async function WunschSearchForm({
             name="motorBrand"
             defaultValue={v("motorBrand")}
             placeholder={t("phMotor")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400/25"
           />
         </label>
         <label className="flex flex-col gap-1">
@@ -97,7 +101,7 @@ export async function WunschSearchForm({
           <select
             name="motorPosition"
             defaultValue={v("motorPosition")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400/25"
           >
             <option value="">{t("any")}</option>
             <option value="mid">{t("motorMid")}</option>
@@ -110,7 +114,7 @@ export async function WunschSearchForm({
           <select
             name="minBatteryWh"
             defaultValue={v("minBatteryWh")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400/25"
           >
             <option value="">{t("any")}</option>
             <option value="400">400 Wh</option>
@@ -124,7 +128,7 @@ export async function WunschSearchForm({
           <select
             name="maxLandedPriceChf"
             defaultValue={v("maxLandedPriceChf")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400/25"
           >
             <option value="">{t("any")}</option>
             <option value="800">{t("budget800")}</option>
@@ -142,7 +146,7 @@ export async function WunschSearchForm({
             min={0}
             defaultValue={v("maxMileageKm")}
             placeholder={t("phKm")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400/25"
           />
         </label>
         <label className="flex flex-col gap-1">
@@ -150,7 +154,7 @@ export async function WunschSearchForm({
           <select
             name="countryCode"
             defaultValue={v("countryCode")}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400/25"
           >
             <option value="">{t("any")}</option>
             <option value="DE">DE</option>

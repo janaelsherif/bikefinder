@@ -37,7 +37,7 @@ ebf:
     allow-credentials: true
   admin:
     import-token: ${EBF_IMPORT_TOKEN:}
-    # Localhost only: allow POST /api/v1/system/import-offers and /crawl/rebike without X-Import-Token.
+    # Localhost only: allow POST /api/v1/system/import-offers and /crawl/* without X-Import-Token.
     dev-open-system-endpoints: ${EBF_DEV_OPEN_SYSTEM_ENDPOINTS:false}
   search:
     # Hide Flyway dev seed / demo rows from procurement search (set true to see them locally).
@@ -46,11 +46,18 @@ ebf:
   staff:
     # Optional: when set, GET /api/v1/offers and /wish require X-Staff-Token (Hamza-only API access).
     api-token: ${EBF_STAFF_API_TOKEN:}
+  # Optional: Claude + Perplexity for POST /api/v1/competitor-watch/brief (no Telegram).
+  llm:
+    anthropic-api-key: ${ANTHROPIC_API_KEY:}
+    anthropic-model: ${ANTHROPIC_MODEL:claude-3-5-sonnet-20241022}
+    perplexity-api-key: ${PERPLEXITY_API_KEY:}
+    perplexity-model: ${PERPLEXITY_MODEL:sonar}
   competitor-watch:
-    # Hamza “5 competitors” — HTTP snapshot + heuristic listing count (set true for weekly cron).
+    # Hamza “5 competitors” — HTTP snapshot + heuristic listing count. When enabled, runs on cron (default daily 08:00 Zurich).
     enabled: ${EBF_COMPETITOR_WATCH_ENABLED:false}
     alert-delta-log-threshold: 5
-    cron: ${EBF_COMPETITOR_WATCH_CRON:0 0 8 * * MON}
+    # Spring 6-field cron: sec min hour day-of-month month day-of-week. ? = any; * = every. Override: EBF_COMPETITOR_WATCH_CRON
+    cron: ${EBF_COMPETITOR_WATCH_CRON:0 0 8 * * ?}
     zone: Europe/Zurich
   crawl:
     # Set EBF_CRAWL_ENABLED=true for scheduled + manual Rebike HTML crawl (robots.txt checked).
@@ -63,6 +70,88 @@ ebf:
       seed-urls:
         - https://www.rebike.de/
       max-products-per-run: ${EBF_CRAWL_REBIKE_MAX:40}
+    upway-de:
+      storefront-base: https://www.upway.de
+      seed-urls:
+        - https://www.upway.de/
+        - https://www.upway.de/collections/all
+      max-products-per-run: ${EBF_CRAWL_UPWAY_DE_MAX:40}
+    # Shopify Hamza / sourcing rows (V3/V8/V13/V16/V17). Heuristic targets + Velocorner below; Ricardo/Tutti/Kleinanzeigen skip.
+    shopify-targets:
+      - source-id: a0000003-0000-0000-0000-000000000008
+        label: Upway NL
+        storefront-base: https://www.upway.nl
+        seed-urls:
+          - https://www.upway.nl/
+          - https://www.upway.nl/collections/all
+        max-products-per-run: ${EBF_CRAWL_SHOPIFY_MAX:40}
+        allowed-currencies:
+          - EUR
+      - source-id: a0000003-0000-0000-0000-000000000011
+        label: Upway FR
+        storefront-base: https://upway.co
+        seed-urls:
+          - https://upway.co/fr/
+          - https://upway.co/fr/collections/all
+        max-products-per-run: ${EBF_CRAWL_SHOPIFY_MAX:40}
+        allowed-currencies:
+          - EUR
+      - source-id: a0000004-0000-0000-0000-000000000005
+        label: Upway CH
+        storefront-base: https://upway.ch
+        seed-urls:
+          - https://upway.ch/
+          - https://upway.ch/collections/all
+        max-products-per-run: ${EBF_CRAWL_SHOPIFY_MAX:40}
+        allowed-currencies:
+          - CHF
+      - source-id: a0000003-0000-0000-0000-000000000007
+        label: LikedBikes DE
+        storefront-base: https://likedbikes.com
+        seed-urls:
+          - https://likedbikes.com/
+          - https://likedbikes.com/collections/all
+        max-products-per-run: ${EBF_CRAWL_SHOPIFY_MAX:40}
+        allowed-currencies:
+          - EUR
+      - source-id: a0000004-0000-0000-0000-000000000007
+        label: Rebike CH
+        storefront-base: https://rebike.ch
+        seed-urls:
+          - https://rebike.ch/
+          - https://rebike.ch/collections/all
+        max-products-per-run: ${EBF_CRAWL_SHOPIFY_MAX:40}
+        allowed-currencies:
+          - CHF
+    # Non-Shopify: discover product links with regex on seeds, import schema.org Product JSON-LD (V19 sources).
+    json-ld-link-targets:
+      - source-id: a0000005-0000-0000-0000-000000000002
+        label: BibiBike CH
+        seed-urls:
+          - https://www.bibibike.ch/bikes
+        link-regex: "https://(www\\.)?bibibike\\.ch/bikes/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+        max-products-per-run: ${EBF_CRAWL_HEURISTIC_MAX:25}
+        allowed-currencies:
+          - CHF
+          - EUR
+      - source-id: a0000005-0000-0000-0000-000000000001
+        label: Veloplus CH
+        seed-urls:
+          - https://www.veloplus.ch/shop/velos-and-e-bikes/velos/e-mountainbikes
+          - https://www.veloplus.ch/shop/velos-and-e-bikes/velos/trekking-e-bikes
+        link-regex: "https://www\\.veloplus\\.ch/shop/[^?]+/[0-9]{6,}"
+        max-products-per-run: ${EBF_CRAWL_HEURISTIC_MAX:25}
+        allowed-currencies:
+          - CHF
+          - EUR
+    velocorner:
+      enabled: true
+      source-id: a0000004-0000-0000-0000-000000000004
+      label: Velocorner CH
+      seed-urls:
+        - https://velocorner.ch/en/bicycle-marketplace
+        - https://velocorner.ch/en/bicycle-marketplace?page=2
+      max-products-per-run: ${EBF_CRAWL_HEURISTIC_MAX:25}
   pricesense:
     # PatrickBike: Swiss median path when at least N CH listings in DB; else DE EUR→CHF×F_CH+A fallback.
     swiss-min-listings: ${EBF_PRICESENSE_SWISS_MIN:5}

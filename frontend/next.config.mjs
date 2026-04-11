@@ -2,9 +2,15 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
+/**
+ * Dev: if you see "Cannot find module './682.js'" / "./vendor-chunks/next-intl.js" or random 404s,
+ * stop all `next dev` instances, run `npm run clean`, then `npm run dev` (avoid `--turbo` unless
+ * needed — Turbopack ignores the webpack `chunkIds: "named"` workaround below).
+ */
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Avoid broken ./vendor-chunks/@formatjs.js resolution in dev (next-intl → use-intl → intl-messageformat).
+  // Must stay in sync: do not list next-intl in serverComponentsExternalPackages — Next forbids the
+  // same package in transpilePackages + external, and externalizing breaks setRequestLocale in RSC.
   transpilePackages: ["next-intl"],
   experimental: {
     serverComponentsExternalPackages: [

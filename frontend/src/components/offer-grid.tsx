@@ -16,19 +16,19 @@ export function OfferGrid({
   labels: OfferGridLabels;
 }) {
   return (
-    <ul className="grid gap-4 sm:grid-cols-2">
+    <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {offers.map((o) => (
         <li
           key={o.id}
-          className="flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm"
+          className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-card transition-shadow duration-200 hover:shadow-card-hover"
         >
-          <div className="relative aspect-[16/10] bg-zinc-100">
+          <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100">
             {o.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={o.imageUrl}
                 alt=""
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
               />
             ) : (
               <div className="flex h-full items-center justify-center text-xs text-zinc-400">

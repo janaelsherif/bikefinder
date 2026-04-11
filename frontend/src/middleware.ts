@@ -11,9 +11,10 @@ export default function middleware(request: NextRequest) {
     if (pathname.includes("/staff-login")) {
       return intlMiddleware(request);
     }
-    const staffOnly = /^\/([^/]+)\/(suche|competitive-pricing)\/?$/.exec(
-      pathname,
-    );
+    const staffOnly =
+      /^\/([^/]+)\/(suche|competitive-pricing|competitor-watch|sourcing)\/?$/.exec(
+        pathname,
+      );
     if (staffOnly && request.cookies.get("ebf_staff")?.value !== "1") {
       const locale = staffOnly[1];
       const url = request.nextUrl.clone();

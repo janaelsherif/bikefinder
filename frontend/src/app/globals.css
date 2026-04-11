@@ -6,6 +6,8 @@
 :root {
   --background: #fafafa;
   --foreground: #18181b;
+  /* Fallback until next/font injects --font-sans on <html> */
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,10 +19,11 @@
 
 @layer base {
   html {
-    @apply h-full;
+    @apply h-full scroll-smooth;
   }
   body {
     @apply min-h-full bg-zinc-50 text-zinc-950 antialiased;
+    text-rendering: optimizeLegibility;
   }
 }
 

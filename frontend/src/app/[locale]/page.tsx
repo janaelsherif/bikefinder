@@ -13,23 +13,32 @@ export default async function HomePage() {
 
   return (
     <PageShell>
-      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
         <DisclaimerStrip />
-        <header className="mb-10">
-          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">
+        <header className="mb-12 rounded-2xl border border-zinc-200/80 bg-white/90 p-8 shadow-card backdrop-blur-sm sm:p-10">
+          <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
+            {t("heroKicker")}
+          </p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl lg:text-[2.5rem] lg:leading-tight">
             {t("title")}
           </h1>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-600">
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-zinc-600 sm:text-lg">
             {t("subtitle")}
           </p>
-          <p className="mt-4 text-sm text-zinc-600">
+          <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
               href="/suche"
-              className="font-medium text-zinc-900 underline underline-offset-2"
+              className="inline-flex items-center justify-center rounded-full bg-zinc-900 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-zinc-800 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
             >
               {t("toWunschSearch")}
             </Link>
-          </p>
+            <Link
+              href="/sourcing"
+              className="inline-flex items-center justify-center rounded-full border border-zinc-300 bg-white px-6 py-3 text-sm font-semibold text-zinc-900 shadow-sm transition hover:border-zinc-400 hover:bg-zinc-50"
+            >
+              {t("toSourcingDirectory")}
+            </Link>
+          </div>
         </header>
 
         {!data && (

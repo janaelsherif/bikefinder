@@ -15,7 +15,8 @@ import org.springframework.web.client.RestClient;
     EbfMailProperties.class,
     PriceSenseProperties.class,
     CompetitorWatchProperties.class,
-    CorsProperties.class
+    CorsProperties.class,
+    LlmProperties.class
 })
 public class AppConfig {
 
@@ -24,5 +25,17 @@ public class AppConfig {
         return RestClient.builder()
                 .baseUrl("https://www.ecb.europa.eu")
                 .build();
+    }
+
+    /** Anthropic Messages API (Claude). */
+    @Bean("anthropicRestClient")
+    public RestClient anthropicRestClient() {
+        return RestClient.builder().baseUrl("https://api.anthropic.com").build();
+    }
+
+    /** Perplexity OpenAI-compatible API. */
+    @Bean("perplexityRestClient")
+    public RestClient perplexityRestClient() {
+        return RestClient.builder().baseUrl("https://api.perplexity.ai").build();
     }
 }

@@ -1,5 +1,8 @@
 #!/usr/bin/env node
-/** Remove Next.js + tooling caches (fixes missing chunk errors like Cannot find module './682.js'). */
+/**
+ * Remove Next.js + tooling caches.
+ * Fixes: Cannot find module './682.js', ./vendor-chunks/next-intl.js, spurious 404s on valid routes.
+ */
 const fs = require("fs");
 const path = require("path");
 const root = path.join(__dirname, "..");

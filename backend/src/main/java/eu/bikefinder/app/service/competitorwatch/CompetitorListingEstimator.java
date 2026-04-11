@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Heuristic listing-surface count from a single HTML page (homepage or category). Not “new listings
  * this week” — that needs stable listing IDs over time. Use week-over-week delta of this signal as a
- * rough activity proxy after robots/terms review.
+ * rough activity proxy after robots.txt review.
  */
 public final class CompetitorListingEstimator {
 
