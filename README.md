@@ -14,7 +14,7 @@ Price-intelligence platform for Swiss buyers: crawls EU e-bike listings, compute
 | Path | Stack |
 |------|--------|
 | `backend/` | Java 21, Spring Boot 3.3, Flyway, JPA |
-| `frontend/` | Next.js 14 (App Router), Tailwind, next-intl — URLs **`/de-CH/…`** (default) and **`/en/…`** (language switcher) |
+| `frontend/` | Next.js 14 (App Router), Tailwind, next-intl — URLs **`/en/…`** (default locale) and **`/de-CH/…`** (language switcher) |
 
 **Deploy (GitHub + Vercel + API):** Vercel runs **`frontend/`** only; the API + PostgreSQL need a separate host. **[DEPLOY.md](./DEPLOY.md)** · **[docs/SCOPE_AND_PHASE2.md](./docs/SCOPE_AND_PHASE2.md)** (V1 scope, limitations, Phase 2 roadmap — **keep updated**) · **`frontend/.env.production.example`** · Docker: **`backend/Dockerfile`** · Render: **[infra/render.yaml](./infra/render.yaml)** · CI: **`./scripts/verify-build.sh`** (same as GitHub Actions).
 
@@ -51,7 +51,9 @@ chmod +x start-frontend.sh
 ./start-frontend.sh
 ```
 
-Open **http://localhost:3000** (redirects to **`/de-CH`**). By default the UI **hides Flyway demo listings** (`bike_offer.is_demo`), so the home page can look **empty until you import real rows**. **Wunsch-Suche:** e.g. http://localhost:3000/de-CH/suche or http://localhost:3000/en/suche
+Open **http://localhost:3000** (redirects to **`/en`**). By default the UI **hides Flyway demo listings** (`bike_offer.is_demo`), so the home page can look **empty until you import real rows**. **Wunsch-Suche:** e.g. http://localhost:3000/de-CH/suche or http://localhost:3000/en/suche
+
+**Frontend env (optional):** copy **`frontend/.env.local.example`** → **`frontend/.env.local`** to set `NEXT_PUBLIC_API_BASE_URL`, `STAFF_UI_PASSWORD` (staff browser gate when set), etc. **Do not commit** `.env.local`. If **`STAFF_UI_PASSWORD`** is set, sign in at **`/{locale}/staff-login`** before other pages load. **Dev:** run **`npm run dev`** once in `frontend/`, then refresh the browser; if you see missing webpack chunks (`./948.js`), stop and run **`npm run dev:fresh`**.
 
 ### Load real listings (Shopify crawl)
 

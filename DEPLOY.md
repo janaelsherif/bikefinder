@@ -84,7 +84,7 @@ After setting keys, **restart the API**. Keys are documented in repo root `.env.
 |------|---------|
 | `NEXT_PUBLIC_API_BASE_URL` | `https://your-api.onrender.com` (public URL of Spring Boot, **no** trailing slash) |
 | `EBF_STAFF_API_TOKEN` | Same as backend `EBF_STAFF_API_TOKEN` if you use staff-protected APIs |
-| `STAFF_UI_PASSWORD` | Optional; gates **`/suche`**, **`/competitive-pricing`**, **`/competitor-watch`**, and **`/sourcing`** in the browser |
+| `STAFF_UI_PASSWORD` | Optional shared password for the staff UI. When set, the browser gate applies to **all locale routes** except **`/…/staff-login`** (sign-in first). Use a **strong** secret in production (not the demo value from `.env.local.example`). |
 
 `NEXT_PUBLIC_*` is embedded at **build time**. After changing it, **redeploy** on Vercel.
 
@@ -109,7 +109,7 @@ After setting keys, **restart the API**. Keys are documented in repo root `.env.
 - [ ] `EBF_CORS_ORIGINS` includes your Vercel URL(s).
 - [ ] DB reachable from API; Flyway completed on first boot.
 - [ ] If you use staff features: `EBF_STAFF_API_TOKEN` matches between API and Vercel; optional `STAFF_UI_PASSWORD` set if you want the browser gate.
-- [ ] Open `https://YOUR-VERCEL-APP.vercel.app/de-CH` — listings appear once the DB has data (run an import/crawl from the API side if empty).
+- [ ] Open `https://YOUR-VERCEL-APP.vercel.app/en` (or `/de-CH`) — listings appear once the DB has data (run an import/crawl from the API side if empty).
 - [ ] If you want **Competitor Watch** live: `EBF_COMPETITOR_WATCH_ENABLED=true` on the API (see §5).
 - [ ] **(Optional)** If Patrick wants the **AI competitor brief** on **`/competitor-watch`**: set `ANTHROPIC_API_KEY` (and optionally `PERPLEXITY_API_KEY`) on the **API** host, then restart the API. Skip on first deploy if you are not ready — everything else works without these keys.
 - [ ] No dev-only flags in production (`EBF_DEV_OPEN_SYSTEM_ENDPOINTS`, etc.).
