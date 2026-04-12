@@ -1,6 +1,7 @@
-# EuropeBikeFinder — System architecture (stakeholder brief)
+# Architecture
 
-**Purpose of this document:** Describe how the application is built and deployed so stakeholders can support decisions on **hosting, cost, security, and integrations**.  
+This document describes how the application is built and deployed so you can plan **hosting, cost, security, and integrations**.
+
 **Repository:** monorepo with `frontend/` (web) and `backend/` (API and data jobs).  
 **Product:** Price-intelligence for Swiss procurement — EU e-bike listings, CHF landed pricing, search, sourcing views, optional competitor monitoring.
 
@@ -116,7 +117,7 @@ flowchart TB
 
 ---
 
-## 8. Contact for technical follow-up
+## 8. Technical follow-up
 
 Use this document together with **`DEPLOY.md`** for infrastructure planning. For **cost estimates**, separate **fixed** hosting (Vercel + API + DB) from **variable** LLM usage (brief generations per month × vendor rates).
 
