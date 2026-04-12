@@ -1,10 +1,5 @@
-import { routing } from "@/i18n/routing";
-
-/** Path for native forms and redirects; next-intl Link handles this automatically. */
+/** Path for native forms (`action=…`). With `localePrefix: "always"`, every URL includes the locale. */
 export function localePath(locale: string, pathname: string): string {
   const p = pathname.startsWith("/") ? pathname : `/${pathname}`;
-  if (locale === routing.defaultLocale) {
-    return p;
-  }
   return `/${locale}${p}`;
 }

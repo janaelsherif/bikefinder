@@ -2,14 +2,51 @@ export const dynamic = "force-dynamic";
 
 import { getTranslations } from "next-intl/server";
 import { DisclaimerStrip } from "@/components/disclaimer-strip";
+import { CountryFilterBar } from "@/components/country-filter-bar";
+import { OfferSortBar } from "@/components/offer-sort-bar";
 import { OfferGrid } from "@/components/offer-grid";
 import { PageShell } from "@/components/page-shell";
 import { Link } from "@/i18n/navigation";
+import {
+  LISTING_COUNTRY_CODES,
+  parseListingCountryParam,
+} from "@/lib/country-options";
 import { fetchOffersPage } from "@/lib/offers-api";
 
-export default async function HomePage() {
+type Props = {
+  searchParams: Record<string, string | string[] | undefined>;
+};
+
+export default async function HomePage({ searchParams }: Props) {
   const t = await getTranslations("Home");
-  const data = await fetchOffersPage({}, { size: 12 });
+  const ts = await getTranslations("SortBar");
+  const tSearch = await getTranslations("Search");
+  const tCf = await getTranslations("CountryFilter");
+  const sortRaw = searchParams.offerSort;
+  const sortParam =
+    typeof sortRaw === "string"
+      ? sortRaw
+      : Array.isArray(sortRaw)
+        ? sortRaw[0]
+        : undefined;
+  const countryParam = parseListingCountryParam(searchParams.countryCode);
+
+  const byCode: Record<string, string> = {};
+  for (const code of LISTING_COUNTRY_CODES) {
+    byCode[code] = tSearch(`country_${code}` as never);
+  }
+
+  const apiParams: Record<string, string | string[] | undefined> = {};
+  if (sortParam) {
+    apiParams.offerSort = sortParam;
+  }
+  if (countryParam) {
+    apiParams.countryCode = countryParam;
+  }
+
+  const data = await fetchOffersPage(apiParams, {
+    size: 12,
+  });
 
   return (
     <PageShell>
@@ -47,22 +84,43 @@ export default async function HomePage() {
           </p>
         )}
 
-        {data && data.content.length === 0 && (
-          <p className="rounded-lg border border-zinc-200 bg-white px-4 py-6 text-sm text-zinc-600">
-            {t("empty")}
-          </p>
-        )}
-
-        {data && data.content.length > 0 && (
-          <OfferGrid
-            offers={data.content}
-            labels={{
-              cta: t("cta"),
-              bargain: t("bargain"),
-              topDeal: t("topDeal"),
-              discountVsCh: t("discountVsCh"),
-            }}
-          />
+        {data && (
+          <>
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-8">
+              <OfferSortBar
+                labels={{
+                  label: ts("label"),
+                  newest: ts("newest"),
+                  priceAsc: ts("priceAsc"),
+                  priceDesc: ts("priceDesc"),
+                  countryAsc: ts("countryAsc"),
+                  countryDesc: ts("countryDesc"),
+                }}
+              />
+              <CountryFilterBar
+                labels={{
+                  label: tCf("label"),
+                  any: tCf("any"),
+                  byCode,
+                }}
+              />
+            </div>
+            {data.content.length === 0 ? (
+              <p className="rounded-lg border border-zinc-200 bg-white px-4 py-6 text-sm text-zinc-600">
+                {t("empty")}
+              </p>
+            ) : (
+              <OfferGrid
+                offers={data.content}
+                labels={{
+                  cta: t("cta"),
+                  bargain: t("bargain"),
+                  topDeal: t("topDeal"),
+                  discountVsCh: t("discountVsCh"),
+                }}
+              />
+            )}
+          </>
         )}
       </div>
     </PageShell>

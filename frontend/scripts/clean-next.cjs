@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Remove Next.js + tooling caches.
- * Fixes: Cannot find module './682.js', ./vendor-chunks/next-intl.js, spurious 404s on valid routes.
+ * Fixes: Cannot find module './682.js', './948.js', ./vendor-chunks/next-intl.js, spurious 404s.
  */
 const fs = require("fs");
 const path = require("path");

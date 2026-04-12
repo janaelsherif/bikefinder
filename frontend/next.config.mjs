@@ -3,12 +3,9 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 /**
- * Dev: if you see "Cannot find module './682.js'" / "./vendor-chunks/next-intl.js" or random 404s,
- * stop all `next dev` instances, run `npm run clean`, then `npm run dev` (avoid `--turbo` unless
- * needed — Turbopack ignores the webpack tweaks below).
- *
- * We disable `splitChunks` in dev so HMR does not reference evicted numeric chunks after partial
- * rebuilds (common with next-intl). Production keeps Next defaults (`dev` is false).
+ * Dev: run **`npm run dev` once**, then use browser refresh only. If you see `./948.js` / missing chunks,
+ * stop the server and run **`npm run dev:fresh`** (clears `.next`). Avoid `next dev --turbo` with next-intl.
+ * Server-only `splitChunks: false` in dev; client keeps default chunks (Tailwind/CSS).
  */
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -27,18 +24,13 @@ const nextConfig = {
       "@formatjs/intl-localematcher",
     ],
   },
-  /**
-   * Dev-only: use named chunk ids so HMR does not reference stale numeric chunks (e.g. ./682.js)
-   * after partial rebuilds or mixed next dev instances.
-   * Mutate in place — replacing `config.optimization` wholesale can drop Next-internal fields and
-   * break CSS extraction (symptom: HTML loads but Tailwind/global styles never apply).
-   */
-  webpack: (config, { dev }) => {
+  webpack: (config, { dev, isServer }) => {
     if (dev && config.optimization) {
       config.optimization.chunkIds = "named";
       config.optimization.moduleIds = "named";
-      // Single dev bundle graph → no stale `./682.js` requires from deleted split chunks.
-      config.optimization.splitChunks = false;
+      if (isServer) {
+        config.optimization.splitChunks = false;
+      }
     }
     return config;
   },

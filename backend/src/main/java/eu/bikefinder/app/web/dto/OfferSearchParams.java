@@ -1,6 +1,7 @@
 package eu.bikefinder.app.web.dto;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
 /**
  * Query parameters for {@code GET /api/v1/offers}. All optional; combined with AND.
@@ -28,6 +29,12 @@ public class OfferSearchParams {
     private Boolean warrantyPresent;
     /** If true, only is_bargain = true */
     private Boolean bargainOnly;
+
+    /**
+     * Listing order: {@code newest}, {@code price_asc}, {@code price_desc}, {@code country_asc},
+     * {@code country_desc}. When absent, defaults to newest first.
+     */
+    private String offerSort;
 
     public String getBrand() {
         return brand;
@@ -131,5 +138,21 @@ public class OfferSearchParams {
 
     public void setBargainOnly(Boolean bargainOnly) {
         this.bargainOnly = bargainOnly;
+    }
+
+    public String getOfferSort() {
+        return offerSort;
+    }
+
+    public void setOfferSort(String offerSort) {
+        this.offerSort = offerSort;
+    }
+
+    /** Lowercase sort token, or null when unset. */
+    public String normalizedOfferSort() {
+        if (offerSort == null || offerSort.isBlank()) {
+            return null;
+        }
+        return offerSort.trim().toLowerCase(Locale.ROOT);
     }
 }

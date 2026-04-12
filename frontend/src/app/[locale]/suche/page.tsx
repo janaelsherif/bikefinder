@@ -7,6 +7,7 @@ import {
   type AlertSubscribeLabels,
 } from "@/components/alert-subscribe-card";
 import { DisclaimerStrip } from "@/components/disclaimer-strip";
+import { OfferSortBar } from "@/components/offer-sort-bar";
 import { OfferGrid } from "@/components/offer-grid";
 import { PageShell } from "@/components/page-shell";
 import { WunschSearchForm } from "@/components/wunsch-search-form";
@@ -51,6 +52,7 @@ export default async function SuchePage({ params, searchParams }: Props) {
   const { locale } = await resolveLocaleParams(params);
   const t = await getTranslations("Home");
   const ts = await getTranslations("Search");
+  const tSort = await getTranslations("SortBar");
   const ta = await getTranslations("Alert");
   const data = await fetchWishSearch(searchParams, { size: 24 });
 
@@ -83,6 +85,18 @@ export default async function SuchePage({ params, searchParams }: Props) {
 
         <section className="mt-10">
           <h2 className="mb-4 text-lg font-semibold text-zinc-900">{ts("results")}</h2>
+          <div className="mb-6">
+            <OfferSortBar
+              labels={{
+                label: tSort("label"),
+                newest: tSort("newest"),
+                priceAsc: tSort("priceAsc"),
+                priceDesc: tSort("priceDesc"),
+                countryAsc: tSort("countryAsc"),
+                countryDesc: tSort("countryDesc"),
+              }}
+            />
+          </div>
           {!data && (
             <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
               {t("error")}

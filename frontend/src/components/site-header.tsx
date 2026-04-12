@@ -1,10 +1,16 @@
+import { cookies } from "next/headers";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { StaffLogoutButton } from "@/components/staff-logout-button";
+
+const authLinkClass =
+  "text-sm font-medium text-zinc-600 underline-offset-4 transition hover:text-zinc-900 hover:underline";
 
 export async function SiteHeader() {
   const t = await getTranslations("Nav");
   const locale = await getLocale();
+  const isStaffSession = cookies().get("ebf_staff")?.value === "1";
 
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-200/80 bg-white/85 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-white/70">
@@ -22,6 +28,13 @@ export async function SiteHeader() {
           <span className="hidden sm:inline">{t("brand")}</span>
         </Link>
         <div className="flex flex-wrap items-center gap-3 sm:gap-5">
+          {isStaffSession ? (
+            <StaffLogoutButton label={t("logout")} className={authLinkClass} />
+          ) : (
+            <Link href="/staff-login" className={authLinkClass}>
+              {t("login")}
+            </Link>
+          )}
           <nav className="flex flex-wrap items-center gap-1 rounded-full border border-zinc-200/80 bg-zinc-50/90 p-1 text-sm shadow-sm">
             <Link
               href="/"

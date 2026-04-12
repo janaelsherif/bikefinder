@@ -38,6 +38,7 @@ public final class OfferSearchRelax {
         r.setCountryCode(strict.getCountryCode());
         r.setWarrantyPresent(false);
         r.setBargainOnly(false);
+        r.setOfferSort(strict.getOfferSort());
         return r;
     }
 

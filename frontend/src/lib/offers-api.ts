@@ -52,6 +52,8 @@ const ALLOWED_KEYS = new Set([
   "bargainOnly",
   "size",
   "page",
+  /** Server: newest | price_asc | price_desc | country_asc | country_desc */
+  "offerSort",
 ]);
 
 /** Builds query string for GET /api/v1/offers from plain search params (form or URL). */

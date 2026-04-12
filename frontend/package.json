@@ -8,9 +8,9 @@
   "scripts": {
     "clean": "node scripts/clean-next.cjs",
     "dev": "next dev",
-    "dev:poll": "WATCHPACK_POLLING=true next dev",
+    "dev:fresh": "node scripts/clean-next.cjs && next dev",
     "dev:turbo": "next dev --turbo",
-    "dev:clean": "npm run clean && next dev",
+    "dev:poll": "npm run clean && WATCHPACK_POLLING=true next dev",
     "dev:clean:poll": "npm run clean && WATCHPACK_POLLING=true next dev",
     "build": "next build",
     "start": "next start",

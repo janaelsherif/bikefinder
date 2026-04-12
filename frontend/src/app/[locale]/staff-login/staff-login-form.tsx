@@ -3,14 +3,12 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
-import { Link } from "@/i18n/navigation";
-
 export function StaffLoginForm() {
   const t = useTranslations("StaffLogin");
   const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextPath = searchParams.get("next") ?? `/${locale}/suche`;
+  const nextPath = searchParams.get("next") ?? `/${locale}`;
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
 
@@ -20,8 +18,12 @@ export function StaffLoginForm() {
     const res = await fetch("/api/staff-session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ password: password.trim() }),
     });
+    if (res.status === 501) {
+      setErr(t("errorNotConfigured"));
+      return;
+    }
     if (!res.ok) {
       setErr(t("error"));
       return;
@@ -53,11 +55,6 @@ export function StaffLoginForm() {
           {t("submit")}
         </button>
       </form>
-      <p className="mt-6 text-sm text-zinc-500">
-        <Link href="/" className="text-zinc-700 underline">
-          {t("home")}
-        </Link>
-      </p>
     </div>
   );
 }

@@ -1,5 +1,9 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import {
+  LISTING_COUNTRY_CODES,
+  parseListingCountryParam,
+} from "@/lib/country-options";
 import { localePath } from "@/lib/locale-path";
 
 function val(
@@ -24,12 +28,15 @@ export async function WunschSearchForm({
   const v = (key: string) => val(searchParams, key);
   const formAction = localePath(locale, "/suche");
 
+  const sortVal = v("offerSort");
+
   return (
     <form
       method="get"
       action={formAction}
       className="rounded-2xl border border-zinc-200/90 bg-white/95 p-5 shadow-card backdrop-blur-sm sm:p-8"
     >
+      {sortVal ? <input type="hidden" name="offerSort" value={sortVal} /> : null}
       <h2 className="mb-2 text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl">
         {t("title")}
       </h2>
@@ -153,15 +160,17 @@ export async function WunschSearchForm({
           <span className="text-sm font-medium text-zinc-800">{t("countryCode")}</span>
           <select
             name="countryCode"
-            defaultValue={v("countryCode")}
+            defaultValue={
+              parseListingCountryParam(searchParams.countryCode) ?? ""
+            }
             className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm transition focus:border-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-400/25"
           >
             <option value="">{t("any")}</option>
-            <option value="DE">DE</option>
-            <option value="NL">NL</option>
-            <option value="FR">FR</option>
-            <option value="IT">IT</option>
-            <option value="AT">AT</option>
+            {LISTING_COUNTRY_CODES.map((code) => (
+              <option key={code} value={code}>
+                {t(`country_${code}` as never)}
+              </option>
+            ))}
           </select>
         </label>
       </div>

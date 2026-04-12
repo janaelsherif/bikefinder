@@ -49,7 +49,7 @@ public class OfferQueryService {
     public Page<OfferSummaryDto> search(OfferSearchParams params, Pageable pageable) {
         validate(params);
         Specification<BikeOffer> spec = buildSpecification(params, searchProperties.isIncludeDemoListings());
-        Pageable sorted = sorted(pageable);
+        Pageable sorted = buildPageable(params, pageable);
         return bikeOfferRepository.findAll(spec, sorted).map(this::toDto);
     }
 
@@ -112,7 +112,7 @@ public class OfferQueryService {
             int y = ref.getModelYear();
             spec = and(spec, BikeOfferSpecs.modelYearBetweenInclusive(y - 2, y + 2));
         }
-        Pageable sorted = sorted(pageable);
+        Pageable sorted = similarListingsPageable(pageable);
         return bikeOfferRepository.findAll(spec, sorted).map(this::toDto);
     }
 
@@ -121,7 +121,7 @@ public class OfferQueryService {
         validate(params);
         boolean includeDemo = searchProperties.isIncludeDemoListings();
         Specification<BikeOffer> strictSpec = buildSpecification(params, includeDemo);
-        Pageable sorted = sorted(pageable);
+        Pageable sorted = buildPageable(params, pageable);
         Page<BikeOffer> exact = bikeOfferRepository.findAll(strictSpec, sorted);
         if (exact.getTotalElements() > 0) {
             return new WishSearchResponse(
@@ -140,11 +140,44 @@ public class OfferQueryService {
         return new WishSearchResponse(tier, Page.empty(sorted), near.map(b -> toDto(b, "near")));
     }
 
-    private static Pageable sorted(Pageable pageable) {
+    /**
+     * Uses {@link OfferSearchParams#getOfferSort()} ({@code newest}, {@code price_asc}, …) so nested JPA paths avoid
+     * Spring’s {@code sort=a,b} comma ambiguity.
+     */
+    private static Pageable buildPageable(OfferSearchParams params, Pageable pageable) {
+        String mode = params.normalizedOfferSort();
+        if (mode != null) {
+            Sort s = sortFromOfferMode(mode);
+            if (s != null) {
+                return PageRequest.of(
+                        pageable.getPageNumber(),
+                        pageable.getPageSize(),
+                        s.and(Sort.by(Sort.Order.asc("id"))));
+            }
+        }
+        return defaultNewestPageable(pageable);
+    }
+
+    private static Sort sortFromOfferMode(String mode) {
+        return switch (mode) {
+            case "newest" -> Sort.by(Sort.Order.desc("firstSeenAt"));
+            case "price_asc" -> Sort.by(Sort.Order.asc("landedPriceChf"));
+            case "price_desc" -> Sort.by(Sort.Order.desc("landedPriceChf"));
+            case "country_asc" -> Sort.by(Sort.Order.asc("source.countryCode"));
+            case "country_desc" -> Sort.by(Sort.Order.desc("source.countryCode"));
+            default -> null;
+        };
+    }
+
+    private static Pageable defaultNewestPageable(Pageable pageable) {
         return PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "firstSeenAt"));
+                Sort.by(Sort.Order.desc("firstSeenAt"), Sort.Order.asc("id")));
+    }
+
+    private static Pageable similarListingsPageable(Pageable pageable) {
+        return defaultNewestPageable(pageable);
     }
 
     private void validate(OfferSearchParams p) {
