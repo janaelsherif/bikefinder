@@ -6,8 +6,10 @@ target/
 build/
 .next/
 node_modules/
+frontend/.vercel/
 *.log
 .DS_Store
+.cursor/
 
 # Local JDK (optional; see README)
 .jdks/
