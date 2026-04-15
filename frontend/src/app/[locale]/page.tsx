@@ -2,51 +2,21 @@ export const dynamic = "force-dynamic";
 
 import { getTranslations } from "next-intl/server";
 import { DisclaimerStrip } from "@/components/disclaimer-strip";
-import { CountryFilterBar } from "@/components/country-filter-bar";
-import { OfferSortBar } from "@/components/offer-sort-bar";
-import { OfferGrid } from "@/components/offer-grid";
+import { HomeOffersSection } from "@/components/home-offers-section";
 import { PageShell } from "@/components/page-shell";
 import { Link } from "@/i18n/navigation";
-import {
-  LISTING_COUNTRY_CODES,
-  parseListingCountryParam,
-} from "@/lib/country-options";
-import { fetchOffersPage } from "@/lib/offers-api";
+import { LISTING_COUNTRY_CODES } from "@/lib/country-options";
 
-type Props = {
-  searchParams: Record<string, string | string[] | undefined>;
-};
-
-export default async function HomePage({ searchParams }: Props) {
+export default async function HomePage() {
   const t = await getTranslations("Home");
   const ts = await getTranslations("SortBar");
   const tSearch = await getTranslations("Search");
   const tCf = await getTranslations("CountryFilter");
-  const sortRaw = searchParams.offerSort;
-  const sortParam =
-    typeof sortRaw === "string"
-      ? sortRaw
-      : Array.isArray(sortRaw)
-        ? sortRaw[0]
-        : undefined;
-  const countryParam = parseListingCountryParam(searchParams.countryCode);
 
   const byCode: Record<string, string> = {};
   for (const code of LISTING_COUNTRY_CODES) {
     byCode[code] = tSearch(`country_${code}` as never);
   }
-
-  const apiParams: Record<string, string | string[] | undefined> = {};
-  if (sortParam) {
-    apiParams.offerSort = sortParam;
-  }
-  if (countryParam) {
-    apiParams.countryCode = countryParam;
-  }
-
-  const data = await fetchOffersPage(apiParams, {
-    size: 12,
-  });
 
   return (
     <PageShell>
@@ -78,50 +48,32 @@ export default async function HomePage({ searchParams }: Props) {
           </div>
         </header>
 
-        {!data && (
-          <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-            {t("error")}
-          </p>
-        )}
-
-        {data && (
-          <>
-            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-8">
-              <OfferSortBar
-                labels={{
-                  label: ts("label"),
-                  newest: ts("newest"),
-                  priceAsc: ts("priceAsc"),
-                  priceDesc: ts("priceDesc"),
-                  countryAsc: ts("countryAsc"),
-                  countryDesc: ts("countryDesc"),
-                }}
-              />
-              <CountryFilterBar
-                labels={{
-                  label: tCf("label"),
-                  any: tCf("any"),
-                  byCode,
-                }}
-              />
-            </div>
-            {data.content.length === 0 ? (
-              <p className="rounded-lg border border-zinc-200 bg-white px-4 py-6 text-sm text-zinc-600">
-                {t("empty")}
-              </p>
-            ) : (
-              <OfferGrid
-                offers={data.content}
-                labels={{
-                  cta: t("cta"),
-                  bargain: t("bargain"),
-                  topDeal: t("topDeal"),
-                  discountVsCh: t("discountVsCh"),
-                }}
-              />
-            )}
-          </>
-        )}
+        <HomeOffersSection
+          labels={{
+            sort: {
+              label: ts("label"),
+              newest: ts("newest"),
+              priceAsc: ts("priceAsc"),
+              priceDesc: ts("priceDesc"),
+              countryAsc: ts("countryAsc"),
+              countryDesc: ts("countryDesc"),
+            },
+            country: {
+              label: tCf("label"),
+              any: tCf("any"),
+              byCode,
+            },
+            grid: {
+              cta: t("cta"),
+              bargain: t("bargain"),
+              topDeal: t("topDeal"),
+              discountVsCh: t("discountVsCh"),
+            },
+            empty: t("empty"),
+            error: t("error"),
+            loading: t("loading"),
+          }}
+        />
       </div>
     </PageShell>
   );

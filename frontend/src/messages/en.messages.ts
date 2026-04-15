@@ -6,6 +6,7 @@ const en = {
       "E-bike listings from Europe — price in CHF including estimated import & shipping.",
     empty:
       'Nothing to show yet. The database has no imported listings — run a Rebike crawl or import so real offers appear here (see README: "Load real listings").',
+    loading: "Loading listings...",
     error:
       "API unreachable. Is the backend (port 8080) and Docker (Postgres) running?",
     cta: "View listing",

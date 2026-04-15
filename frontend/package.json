@@ -8,6 +8,7 @@
   "scripts": {
     "clean": "node scripts/clean-next.cjs",
     "dev": "next dev",
+    "dev:remote": "NEXT_PUBLIC_API_BASE_URL=https://bikefinder-api.onrender.com next dev",
     "dev:fresh": "node scripts/clean-next.cjs && next dev",
     "dev:turbo": "next dev --turbo",
     "dev:poll": "npm run clean && WATCHPACK_POLLING=true next dev",
