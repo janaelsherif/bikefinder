@@ -11,6 +11,19 @@ type CrawlSettings = {
   lastAutoRunAt: string | null;
 };
 
+type AsyncTaskAccepted = {
+  taskId: string;
+  taskType: string;
+  status: "queued" | "running" | "succeeded" | "failed" | string;
+};
+
+type AsyncTaskStatus = {
+  taskId: string;
+  taskType: string;
+  status: "queued" | "running" | "succeeded" | "failed" | string;
+  errorMessage: string | null;
+};
+
 export type CrawlControlsCopy = {
   title: string;
   subtitle: string;
@@ -117,12 +130,46 @@ export function CrawlControlsPanel({
         setStatus(`${labels.runErrorPrefix} ${reason}`);
         return;
       }
-      setStatus(`${labels.runSuccessPrefix} ${target}`);
+      const accepted = data as Partial<AsyncTaskAccepted>;
+      if (accepted.taskId) {
+        setStatus(`${labels.runSuccessPrefix} ${target} (${accepted.taskId})`);
+        void pollTaskUntilDone(accepted.taskId, target);
+      } else {
+        setStatus(`${labels.runSuccessPrefix} ${target}`);
+      }
     } catch (err) {
       setStatus(`${labels.runErrorPrefix} ${String(err)}`);
     } finally {
       setIsRunningTarget(null);
       await loadSettings();
+    }
+  }
+
+  async function pollTaskUntilDone(taskId: string, target: CrawlTarget) {
+    for (let attempt = 0; attempt < 30; attempt++) {
+      await new Promise((r) => setTimeout(r, 4000));
+      try {
+        const res = await fetch(`/api/crawl/tasks/${encodeURIComponent(taskId)}`, {
+          cache: "no-store",
+        });
+        if (!res.ok) {
+          return;
+        }
+        const data = (await parseJsonSafe(res)) as Partial<AsyncTaskStatus>;
+        if (data.status === "succeeded") {
+          setStatus(`${labels.runSuccessPrefix} ${target} (${taskId})`);
+          await loadSettings();
+          return;
+        }
+        if (data.status === "failed") {
+          setStatus(
+            `${labels.runErrorPrefix} ${data.errorMessage ?? `task ${taskId} failed`}`,
+          );
+          return;
+        }
+      } catch {
+        return;
+      }
     }
   }
 

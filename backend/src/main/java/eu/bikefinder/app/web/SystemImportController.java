@@ -3,22 +3,23 @@ package eu.bikefinder.app.web;
 import eu.bikefinder.app.config.AdminProperties;
 import eu.bikefinder.app.service.OfferImportService;
 import eu.bikefinder.app.service.competitorwatch.CompetitorWatchService;
-import eu.bikefinder.app.service.crawl.CrawlRunResult;
+import eu.bikefinder.app.service.crawl.AsyncTaskDispatchService;
 import eu.bikefinder.app.service.crawl.CrawlSettingsService;
 import eu.bikefinder.app.service.crawl.FullMarketplaceCrawlCoordinatorService;
 import eu.bikefinder.app.service.crawl.ShopifyCrawlCoordinatorService;
 import eu.bikefinder.app.service.crawl.rebike.RebikeCrawlService;
 import eu.bikefinder.app.service.crawl.upway.UpwayCrawlService;
+import eu.bikefinder.app.web.dto.AsyncTaskAcceptedResponse;
+import eu.bikefinder.app.web.dto.AsyncTaskStatusResponse;
 import eu.bikefinder.app.web.dto.CrawlSettingsResponse;
 import eu.bikefinder.app.web.dto.CrawlSettingsUpdateRequest;
-import eu.bikefinder.app.web.dto.ShopifyCrawlBatchResponse;
-import eu.bikefinder.app.web.dto.ShopifyCrawlBatchResponse.ShopifyCrawlBatchItem;
 import eu.bikefinder.app.web.dto.OfferImportBatchRequest;
 import eu.bikefinder.app.web.dto.OfferImportResultDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +41,7 @@ public class SystemImportController {
     private final OfferImportService offerImportService;
     private final RebikeCrawlService rebikeCrawlService;
     private final UpwayCrawlService upwayCrawlService;
+    private final AsyncTaskDispatchService asyncTaskDispatchService;
     private final CrawlSettingsService crawlSettingsService;
     private final ShopifyCrawlCoordinatorService shopifyCrawlCoordinatorService;
     private final FullMarketplaceCrawlCoordinatorService fullMarketplaceCrawlCoordinatorService;
@@ -50,6 +52,7 @@ public class SystemImportController {
             OfferImportService offerImportService,
             RebikeCrawlService rebikeCrawlService,
             UpwayCrawlService upwayCrawlService,
+            AsyncTaskDispatchService asyncTaskDispatchService,
             CrawlSettingsService crawlSettingsService,
             ShopifyCrawlCoordinatorService shopifyCrawlCoordinatorService,
             FullMarketplaceCrawlCoordinatorService fullMarketplaceCrawlCoordinatorService,
@@ -58,6 +61,7 @@ public class SystemImportController {
         this.offerImportService = offerImportService;
         this.rebikeCrawlService = rebikeCrawlService;
         this.upwayCrawlService = upwayCrawlService;
+        this.asyncTaskDispatchService = asyncTaskDispatchService;
         this.crawlSettingsService = crawlSettingsService;
         this.shopifyCrawlCoordinatorService = shopifyCrawlCoordinatorService;
         this.fullMarketplaceCrawlCoordinatorService = fullMarketplaceCrawlCoordinatorService;
@@ -79,7 +83,7 @@ public class SystemImportController {
 
     /** Manual Rebike crawl (same token as import). Ignores {@code ebf.crawl.enabled} so ops can test without enabling cron. */
     @PostMapping("/crawl/rebike")
-    public ResponseEntity<CrawlRunResult> crawlRebike(
+    public ResponseEntity<AsyncTaskAcceptedResponse> crawlRebike(
             @RequestHeader(value = "X-Import-Token", required = false) String token) {
         if (!adminProperties.isSystemEndpointsAvailable()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -87,12 +91,14 @@ public class SystemImportController {
         if (!adminProperties.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return ResponseEntity.ok(rebikeCrawlService.crawlRebikeOffers(false));
+        var state = asyncTaskDispatchService.dispatch("crawl/rebike", () -> rebikeCrawlService.crawlRebikeOffers(false));
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(new AsyncTaskAcceptedResponse(state.taskId(), state.taskType(), state.status()));
     }
 
     /** Manual Upway DE crawl (same token as import). Ignores {@code ebf.crawl.enabled} so ops can test without cron. */
     @PostMapping("/crawl/upway-de")
-    public ResponseEntity<CrawlRunResult> crawlUpwayDe(
+    public ResponseEntity<AsyncTaskAcceptedResponse> crawlUpwayDe(
             @RequestHeader(value = "X-Import-Token", required = false) String token) {
         if (!adminProperties.isSystemEndpointsAvailable()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -100,7 +106,9 @@ public class SystemImportController {
         if (!adminProperties.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return ResponseEntity.ok(upwayCrawlService.crawlUpwayDeOffers(false));
+        var state = asyncTaskDispatchService.dispatch("crawl/upway-de", () -> upwayCrawlService.crawlUpwayDeOffers(false));
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(new AsyncTaskAcceptedResponse(state.taskId(), state.taskType(), state.status()));
     }
 
     /**
@@ -108,7 +116,7 @@ public class SystemImportController {
      * Shopify shops). Ignores {@code ebf.crawl.enabled} for manual ops testing.
      */
     @PostMapping("/crawl/shopify-all")
-    public ResponseEntity<ShopifyCrawlBatchResponse> crawlShopifyAll(
+    public ResponseEntity<AsyncTaskAcceptedResponse> crawlShopifyAll(
             @RequestHeader(value = "X-Import-Token", required = false) String token) {
         if (!adminProperties.isSystemEndpointsAvailable()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -116,11 +124,11 @@ public class SystemImportController {
         if (!adminProperties.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        var runs =
-                shopifyCrawlCoordinatorService.runAllConfiguredShopify(false).stream()
-                        .map(n -> new ShopifyCrawlBatchItem(n.label(), n.result()))
-                        .toList();
-        return ResponseEntity.ok(new ShopifyCrawlBatchResponse(runs));
+        var state = asyncTaskDispatchService.dispatch(
+                "crawl/shopify-all",
+                () -> shopifyCrawlCoordinatorService.runAllConfiguredShopify(false));
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(new AsyncTaskAcceptedResponse(state.taskId(), state.taskType(), state.status()));
     }
 
     /**
@@ -128,7 +136,7 @@ public class SystemImportController {
      * (blocked to server-side fetch). Ignores {@code ebf.crawl.enabled} for manual testing.
      */
     @PostMapping("/crawl/marketplace-all")
-    public ResponseEntity<ShopifyCrawlBatchResponse> crawlMarketplaceAll(
+    public ResponseEntity<AsyncTaskAcceptedResponse> crawlMarketplaceAll(
             @RequestHeader(value = "X-Import-Token", required = false) String token) {
         if (!adminProperties.isSystemEndpointsAvailable()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -136,11 +144,36 @@ public class SystemImportController {
         if (!adminProperties.isTokenValid(token)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        var runs =
-                fullMarketplaceCrawlCoordinatorService.runEverything(false).stream()
-                        .map(n -> new ShopifyCrawlBatchItem(n.label(), n.result()))
-                        .toList();
-        return ResponseEntity.ok(new ShopifyCrawlBatchResponse(runs));
+        var state = asyncTaskDispatchService.dispatch(
+                "crawl/marketplace-all",
+                () -> fullMarketplaceCrawlCoordinatorService.runEverything(false));
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(new AsyncTaskAcceptedResponse(state.taskId(), state.taskType(), state.status()));
+    }
+
+    @GetMapping("/crawl/tasks/{taskId}")
+    public ResponseEntity<AsyncTaskStatusResponse> crawlTaskStatus(
+            @RequestHeader(value = "X-Import-Token", required = false) String token,
+            @PathVariable String taskId) {
+        if (!adminProperties.isSystemEndpointsAvailable()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        if (!adminProperties.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        var maybe = asyncTaskDispatchService.find(taskId);
+        if (maybe.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        var t = maybe.get();
+        return ResponseEntity.ok(new AsyncTaskStatusResponse(
+                t.taskId(),
+                t.taskType(),
+                t.status(),
+                t.queuedAt(),
+                t.startedAt(),
+                t.finishedAt(),
+                t.errorMessage()));
     }
 
     @GetMapping("/crawl/settings")
