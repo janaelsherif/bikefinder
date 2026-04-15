@@ -4,10 +4,13 @@ import eu.bikefinder.app.config.AdminProperties;
 import eu.bikefinder.app.service.OfferImportService;
 import eu.bikefinder.app.service.competitorwatch.CompetitorWatchService;
 import eu.bikefinder.app.service.crawl.CrawlRunResult;
+import eu.bikefinder.app.service.crawl.CrawlSettingsService;
 import eu.bikefinder.app.service.crawl.FullMarketplaceCrawlCoordinatorService;
 import eu.bikefinder.app.service.crawl.ShopifyCrawlCoordinatorService;
 import eu.bikefinder.app.service.crawl.rebike.RebikeCrawlService;
 import eu.bikefinder.app.service.crawl.upway.UpwayCrawlService;
+import eu.bikefinder.app.web.dto.CrawlSettingsResponse;
+import eu.bikefinder.app.web.dto.CrawlSettingsUpdateRequest;
 import eu.bikefinder.app.web.dto.ShopifyCrawlBatchResponse;
 import eu.bikefinder.app.web.dto.ShopifyCrawlBatchResponse.ShopifyCrawlBatchItem;
 import eu.bikefinder.app.web.dto.OfferImportBatchRequest;
@@ -15,11 +18,15 @@ import eu.bikefinder.app.web.dto.OfferImportResultDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 /**
  * Dev / ops: bulk insert {@code bike_offer} rows and reprice; optional Rebike crawl trigger. Disabled unless
@@ -33,6 +40,7 @@ public class SystemImportController {
     private final OfferImportService offerImportService;
     private final RebikeCrawlService rebikeCrawlService;
     private final UpwayCrawlService upwayCrawlService;
+    private final CrawlSettingsService crawlSettingsService;
     private final ShopifyCrawlCoordinatorService shopifyCrawlCoordinatorService;
     private final FullMarketplaceCrawlCoordinatorService fullMarketplaceCrawlCoordinatorService;
     private final CompetitorWatchService competitorWatchService;
@@ -42,6 +50,7 @@ public class SystemImportController {
             OfferImportService offerImportService,
             RebikeCrawlService rebikeCrawlService,
             UpwayCrawlService upwayCrawlService,
+            CrawlSettingsService crawlSettingsService,
             ShopifyCrawlCoordinatorService shopifyCrawlCoordinatorService,
             FullMarketplaceCrawlCoordinatorService fullMarketplaceCrawlCoordinatorService,
             CompetitorWatchService competitorWatchService) {
@@ -49,6 +58,7 @@ public class SystemImportController {
         this.offerImportService = offerImportService;
         this.rebikeCrawlService = rebikeCrawlService;
         this.upwayCrawlService = upwayCrawlService;
+        this.crawlSettingsService = crawlSettingsService;
         this.shopifyCrawlCoordinatorService = shopifyCrawlCoordinatorService;
         this.fullMarketplaceCrawlCoordinatorService = fullMarketplaceCrawlCoordinatorService;
         this.competitorWatchService = competitorWatchService;
@@ -133,6 +143,36 @@ public class SystemImportController {
         return ResponseEntity.ok(new ShopifyCrawlBatchResponse(runs));
     }
 
+    @GetMapping("/crawl/settings")
+    public ResponseEntity<CrawlSettingsResponse> crawlSettings(
+            @RequestHeader(value = "X-Import-Token", required = false) String token) {
+        if (!adminProperties.isSystemEndpointsAvailable()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        if (!adminProperties.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok(toSettingsResponse());
+    }
+
+    @PatchMapping("/crawl/settings")
+    public ResponseEntity<?> updateCrawlSettings(
+            @RequestHeader(value = "X-Import-Token", required = false) String token,
+            @RequestBody CrawlSettingsUpdateRequest body) {
+        if (!adminProperties.isSystemEndpointsAvailable()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        if (!adminProperties.isTokenValid(token)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        try {
+            crawlSettingsService.update(body.autoCrawlEnabled(), body.autoCrawlTime(), body.timezone());
+            return ResponseEntity.ok(toSettingsResponse());
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+        }
+    }
+
     /** Manual competitor snapshot run (same auth as import). Ignores {@code ebf.competitor-watch.enabled}. */
     @PostMapping("/competitor-watch/run")
     public ResponseEntity<CompetitorWatchService.CompetitorWatchRunResult> runCompetitorWatch(
@@ -144,5 +184,14 @@ public class SystemImportController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.ok(competitorWatchService.runAll(false));
+    }
+
+    private CrawlSettingsResponse toSettingsResponse() {
+        var s = crawlSettingsService.getCurrent();
+        return new CrawlSettingsResponse(
+                s.isAutoCrawlEnabled(),
+                CrawlSettingsService.formatAutoCrawlTime(s.getAutoCrawlTime()),
+                s.getTimezone(),
+                s.getLastAutoRunAt());
     }
 }
