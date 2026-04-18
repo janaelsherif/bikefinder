@@ -1,78 +1,72 @@
 # EuropeBikeFinder — overview for Hamza
 
-This note explains what the product is, what you can do with it, and what to expect—**without technical jargon**.
+What each part of the app is for, and **which websites** are used to pull or compare information.
 
 ---
 
-## What this is
+## What the app is for
 
-**EuropeBikeFinder** is an internal tool for **PatrickBike** to see **e-bike offers from Europe** in one place, with prices thought through in **Swiss francs (CHF)**—including a rough idea of import and delivery—so you can compare opportunities against the **Swiss market** and plan buying or sourcing.
+**PatrickBike** uses this tool to see **European e-bike offers** in one workspace, with amounts shown in **Swiss francs (CHF)** and a rough view of import and delivery—so you can compare with the **Swiss market** and plan buying or sourcing. It is **not** a public shop.
 
-It is **not** a public shop. It is a **workspace** for your team.
+Figures are **estimates**. Before you buy, always check **current customs, VAT, and the seller’s terms**.
 
----
-
-## What you use in the browser
-
-You open the app like a normal website. You can switch **language** between **English** and **German (Switzerland)**.
-
-Typical areas you will see:
-
-- **Listings** — recent offers from the data that has been collected into the system.
-- **Wish search** — search using the same kind of criteria you use for a “wish bike” (type of bike, condition, motor, budget, country, and so on).
-- **Other sections** — for example tools around **competitive pricing**, **competitor watch**, and a **sourcing directory** (where to look for stock), depending on what is turned on for you.
-
-If the team has switched on a **login**, you will see a **sign-in page** first. After you enter the password the team gives you, you can use the app until you sign out or your session ends.
-
-You can **sort** listings (for example by date or price) and **narrow by country** when that is available—so you can focus on offers from places you care about.
+You can use the app in **English** or **German (Switzerland)**. If your team turns on **sign-in**, you’ll enter the password they give you first.
 
 ---
 
-## Where the information comes from
+## What each page does
 
-The numbers are built from **real listing data** that the system **collects and stores** over time (for example from partner shops and marketplaces), plus **reference information** used to estimate Swiss market levels and “good deal” signals.
-
-**Important:** landed CHF figures and savings are **estimates**. Always check **current customs, VAT, and seller conditions** before you buy.
-
----
-
-## The optional “AI brief” (competitor watch)
-
-In the **competitor** area there can be a feature that **writes a short text summary** for you—based on **automated snapshots** of competitor sites and, when configured, a bit of **recent market context**.
-
-- You only use paid **AI services when someone actually asks for that summary**—not all day in the background.
-- If this is **not** set up, the rest of the app still works; you simply won’t get that generated text.
-
-So: **running the app day to day does not mean “paying for AI nonstop.”** AI cost is mainly tied to **how often that summary is requested**.
+| Page | What you do there |
+|------|-------------------|
+| **Listings (home)** | Browse **recent offers** already collected into the tool. You can **sort** (e.g. newest, price) and **filter by country** when that’s available. |
+| **Wish search** | Search with **wish-bike style** filters: brand, model, category, condition, motor, battery, budget, country, mileage, warranty, bargains, etc. |
+| **Competitive pricing** | Compare pricing using **sample competitor listings** already in the tool, and sometimes **live checks** on shop sites when your team has that turned on. |
+| **Competitor watch** | See **weekly-style signals** for agreed competitors: automated **snapshots** of their public shop fronts (how many listings show up, change vs last time). You can open each shop from the screen. There may also be a **short written summary** built from that snapshot data (only when someone asks for it). |
+| **Sourcing directory** | A **reference list** of EU platforms and regions for procurement (classifieds, refurbishers, dealers, B2B notes). Links open in a new tab—this page is for **planning where to source**, not the live listing grid. |
+| **Staff sign-in** | Enter your team password when sign-in is required. |
+| **Privacy** | Privacy information for the app. |
+| **Imprint** | Legal notice / imprint placeholder (to be completed for your company). |
 
 ---
 
-## What “running” the app means in simple terms
+## Websites the system uses for data
 
-Think of three pieces:
+These are the **public sites** the product uses for **pulling offers**, **snapshots**, or **reference**. Each site’s own rules are respected. What is active for you depends on how your team sets up imports and timing.
 
-1. **The website you click** — what you see in the browser.
-2. **The engine behind it** — where calculations, searches, and scheduled checks run.
-3. **The filing cabinet** — where listing data and settings are stored safely.
+**Swiss-focused**
 
-Those three are usually hosted in **different places** in production: the website on a fast web host, the engine and the data on servers the team chooses. That is normal for this kind of product.
+- **veloplus.ch** — Veloplus shop (e-bike categories used as crawl seeds).
+- **upway.ch** — Upway Switzerland storefront.
+- **rebike.ch** — Rebike Switzerland storefront.
+- **bibibike.ch** — BibiBike (e.g. bike listing pages).
+- **velocorner.ch** — Velocorner marketplace (configured target).
 
-**Costs** are mostly: **hosting** those pieces, **the database**, and **internet traffic**. The **AI text** is an **extra**, usage-based cost only if you use that feature.
+**Germany / EU storefronts (examples)**
+
+- **rebike.de** — Rebike Germany (common source for pulling offer rows).
+- **upway.de** — Upway Germany.
+- **upway.nl** — Upway Netherlands.
+- **upway.co** (France) — Upway FR storefront.
+- **likedbikes.com** — LikedBikes.
+
+**Also named in the competitor-watch copy (what Hamza monitors)**
+
+- **Veloplus** — occasions / shop front (as in the UI text).
+- **Upway** — Swiss inventory angle (**upway.ch**).
+- **Rebike** — Swiss angle (**rebike.ch**).
+- **BibiBike** (**bibibike.ch**).
+- **Velocorner** (**velocorner.ch**).
+
+**Euro prices in francs**
+
+- Public **euro-to-Swiss-franc** rates are used so prices from Germany and other euro countries can be shown in **CHF** for comparison (this is not a bike shop—just the standard rate everyone can look up).
+
+**Sourcing directory**
+
+- The **Sourcing** page describes **regions and platform types** (Germany, Netherlands, Austria, etc.). Names and links there come from an internal **reference list** as well as the shops listed above.
 
 ---
 
-## Privacy and responsibility
+## One sentence
 
-The app can hold **business-sensitive** information. Passwords and access should be treated like any internal tool. Legal pages (privacy, imprint) exist in the app; final wording for Switzerland may still need a legal review before a public or wide launch.
-
----
-
-## If something is wrong
-
-If the page does not load, or login fails, or numbers look empty, that is usually **configuration, data not imported yet, or a temporary outage**—your tech contact can check. You do not need to know how it is built to report **what you tried** and **what you saw**.
-
----
-
-## One sentence summary
-
-**EuropeBikeFinder helps PatrickBike see and filter European e-bike opportunities in CHF, compare them to the Swiss context, and watch competitors—with optional AI text only when you ask for it.**
+**EuropeBikeFinder brings together offers and signals from configured European bike shops and marketplaces—especially the Swiss and DE sources above—so PatrickBike can search, compare in CHF, and watch key competitors in one place.**
