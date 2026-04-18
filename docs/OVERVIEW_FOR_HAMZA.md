@@ -35,15 +35,15 @@ These are the **public sites** the product uses for **pulling offers**, **snapsh
 
 **Swiss-focused**
 
-- **veloplus.ch** — Veloplus shop (e-bike categories used as crawl seeds).
+- **veloplus.ch** — Veloplus shop (e-bike category pages the tool reads from).
 - **upway.ch** — Upway Switzerland storefront.
 - **rebike.ch** — Rebike Switzerland storefront.
 - **bibibike.ch** — BibiBike (e.g. bike listing pages).
-- **velocorner.ch** — Velocorner marketplace (configured target).
+- **velocorner.ch** — Velocorner marketplace.
 
 **Germany / EU storefronts (examples)**
 
-- **rebike.de** — Rebike Germany (common source for pulling offer rows).
+- **rebike.de** — Rebike Germany (often used for offers).
 - **upway.de** — Upway Germany.
 - **upway.nl** — Upway Netherlands.
 - **upway.co** (France) — Upway FR storefront.
