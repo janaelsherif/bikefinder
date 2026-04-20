@@ -6,6 +6,7 @@ const deCH = {
       "E-Bike-Angebote aus Europa — Preis in CHF inkl. Schätzung Import & Versand.",
     empty:
       "Keine Angebote zum Anzeigen. Die Datenbank enthält noch keine importierten Listings — nach einem Rebike-Crawl oder Import erscheinen echte Inserate hier (siehe README: «Load real listings»).",
+    loading: "Angebote werden geladen...",
     error:
       "API nicht erreichbar. Läuft das Backend (Port 8080) und Docker (Postgres)?",
     cta: "Zum Angebot",
@@ -275,6 +276,26 @@ Haftung für Links: Trotz sorgfältiger inhaltlicher Kontrolle keine Haftung fü
     aiBriefError: "Brief fehlgeschlagen:",
     aiBriefPerplexityNote: "Web-Kontext enthalten",
     aiBriefNoPerplexityNote: "Perplexity übersprungen oder nicht verfügbar",
+    crawlControlsTitle: "Crawl-Steuerung",
+    crawlControlsSubtitle:
+      "Crawler manuell starten und den täglichen Auto-Crawl-Zeitplan des Backends konfigurieren.",
+    crawlControlsRunMarketplaceAll: "Marketplace-Crawl starten (alle Quellen)",
+    crawlControlsRunShopifyAll: "Shopify-Crawl-Batch starten",
+    crawlControlsRunRebike: "Rebike-Crawl starten",
+    crawlControlsRunUpwayDe: "Upway-DE-Crawl starten",
+    crawlControlsAutoEnabled: "Auto-Crawl aktivieren",
+    crawlControlsAutoTime: "Auto-Crawl-Zeit (Europe/Zurich)",
+    crawlControlsTimezone: "Zeitzone",
+    crawlControlsSaveSettings: "Crawl-Einstellungen speichern",
+    crawlControlsLoading: "Verarbeite…",
+    crawlControlsNotConfigured: "Nicht konfiguriert",
+    crawlControlsSettingsSaved: "Crawl-Einstellungen gespeichert.",
+    crawlControlsLastRun: "Letzter Auto-Crawl-Lauf",
+    crawlControlsNeverRun: "Nie",
+    crawlControlsRunSuccessPrefix: "Crawl gestartet:",
+    crawlControlsRunErrorPrefix: "Crawl fehlgeschlagen:",
+    crawlControlsSettingsErrorPrefix:
+      "Crawl-Einstellungen konnten nicht gespeichert werden:",
   },
   Sourcing: {
     heroKicker: "Beschaffung",

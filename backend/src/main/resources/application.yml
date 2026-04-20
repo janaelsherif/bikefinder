@@ -18,7 +18,8 @@ spring:
           time_zone: UTC
 
 server:
-  port: ${SERVER_PORT:8080}
+  # Render (and similar hosts) set PORT; local dev uses 8080 when PORT is unset.
+  port: ${PORT:${SERVER_PORT:8080}}
 
 management:
   endpoints:

@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { getTranslations } from "next-intl/server";
+import { CrawlControlsPanel } from "@/components/crawl-controls-panel";
 import { CompetitorWatchBriefPanel } from "@/components/competitor-watch-brief-panel";
 import type { CompetitorWatchCopy } from "@/components/competitor-watch-module";
 import { CompetitorWatchModule } from "@/components/competitor-watch-module";
@@ -89,17 +90,41 @@ export default async function CompetitorWatchPage({ params }: Props) {
     noPerplexityNote: t("aiBriefNoPerplexityNote"),
   };
 
+  const crawlControlsLabels = {
+    title: t("crawlControlsTitle"),
+    subtitle: t("crawlControlsSubtitle"),
+    runMarketplaceAll: t("crawlControlsRunMarketplaceAll"),
+    runShopifyAll: t("crawlControlsRunShopifyAll"),
+    runRebike: t("crawlControlsRunRebike"),
+    runUpwayDe: t("crawlControlsRunUpwayDe"),
+    autoEnabledLabel: t("crawlControlsAutoEnabled"),
+    autoTimeLabel: t("crawlControlsAutoTime"),
+    timezoneLabel: t("crawlControlsTimezone"),
+    saveSettings: t("crawlControlsSaveSettings"),
+    loading: t("crawlControlsLoading"),
+    notConfigured: t("crawlControlsNotConfigured"),
+    settingsSaved: t("crawlControlsSettingsSaved"),
+    lastRunLabel: t("crawlControlsLastRun"),
+    neverRun: t("crawlControlsNeverRun"),
+    runSuccessPrefix: t("crawlControlsRunSuccessPrefix"),
+    runErrorPrefix: t("crawlControlsRunErrorPrefix"),
+    settingsErrorPrefix: t("crawlControlsSettingsErrorPrefix"),
+  };
+
   return (
     <PageShell>
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
         <CompetitorWatchBriefPanel labels={aiBriefLabels} />
+        <div className="mt-6">
+          <CrawlControlsPanel locale={locale} labels={crawlControlsLabels} />
+        </div>
         <div className="mt-10">
-        <CompetitorWatchModule
-          locale={locale}
-          dashboard={dashboard}
-          histories={histories}
-          labels={labels}
-        />
+          <CompetitorWatchModule
+            locale={locale}
+            dashboard={dashboard}
+            histories={histories}
+            labels={labels}
+          />
         </div>
       </div>
     </PageShell>
