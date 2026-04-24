@@ -8,6 +8,10 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 public final class BikeOfferSpecs {
@@ -111,6 +115,27 @@ public final class BikeOfferSpecs {
         return (root, query, cb) -> {
             Join<BikeOffer, Source> src = root.join("source", JoinType.INNER);
             return cb.equal(src.get("countryCode"), cc);
+        };
+    }
+
+    /** Source country in {@code iso2Codes} (each non-null token normalized to upper ISO-2). */
+    public static Specification<BikeOffer> sourceCountryCodeIn(Collection<String> iso2Codes) {
+        if (iso2Codes == null || iso2Codes.isEmpty()) {
+            return null;
+        }
+        List<String> upper =
+                iso2Codes.stream()
+                        .filter(Objects::nonNull)
+                        .map(s -> s.trim().toUpperCase(Locale.ROOT))
+                        .filter(s -> s.length() == 2)
+                        .distinct()
+                        .toList();
+        if (upper.isEmpty()) {
+            return null;
+        }
+        return (root, query, cb) -> {
+            Join<BikeOffer, Source> src = root.join("source", JoinType.INNER);
+            return src.get("countryCode").in(upper);
         };
     }
 

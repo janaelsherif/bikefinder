@@ -64,6 +64,9 @@ ebf:
     enabled: ${EBF_CRAWL_ENABLED:false}
     user-agent: ${EBF_CRAWL_USER_AGENT:EuropeBikeFinderBot/0.1 (dev)}
     delay-ms-between-requests: ${EBF_CRAWL_DELAY_MS:1500}
+    # Spring 6-field cron (sec min hour dom mon dow). Default: daily 03:00 Zurich. For “Velo news” freshness the UI
+    # polls every 30s, but new rows only appear as fast as crawls run—e.g. EBF_CRAWL_CRON=0/30 * * * * * (every 30s) if
+    # robots.txt and target sites allow; otherwise use a sustainable interval.
     cron: ${EBF_CRAWL_CRON:0 0 3 * * *}
     rebike:
       storefront-base: https://rebike.com

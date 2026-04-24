@@ -1,5 +1,6 @@
 package eu.bikefinder.app.service;
 
+import eu.bikefinder.app.DiscoveryRegion;
 import eu.bikefinder.app.config.SearchProperties;
 import eu.bikefinder.app.domain.BikeOffer;
 import eu.bikefinder.app.repo.BikeOfferRepository;
@@ -231,7 +232,11 @@ public class OfferQueryService {
         spec = and(spec, BikeOfferSpecs.landedPriceChfAtMost(p.getMaxLandedPriceChf()));
         spec = and(spec, BikeOfferSpecs.discountVsSwissAtLeast(p.getMinDiscountVsSwissPct()));
         spec = and(spec, BikeOfferSpecs.mileageKmAtMost(p.getMaxMileageKm()));
-        spec = and(spec, BikeOfferSpecs.sourceCountryCode(p.getCountryCode()));
+        if (Boolean.TRUE.equals(p.getNearbyMarkets())) {
+            spec = spec.and(BikeOfferSpecs.sourceCountryCodeIn(DiscoveryRegion.NEAR_SWITZERLAND_ISO2));
+        } else {
+            spec = and(spec, BikeOfferSpecs.sourceCountryCode(p.getCountryCode()));
+        }
         if (Boolean.TRUE.equals(p.getWarrantyPresent())) {
             spec = spec.and(BikeOfferSpecs.warrantyPresent());
         }

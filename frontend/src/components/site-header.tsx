@@ -43,6 +43,12 @@ export async function SiteHeader() {
               {t("offers")}
             </Link>
             <Link
+              href="/velo-news"
+              className="rounded-full px-3 py-1.5 text-zinc-600 transition hover:bg-white hover:text-zinc-900 hover:shadow-sm"
+            >
+              {t("veloNews")}
+            </Link>
+            <Link
               href="/suche"
               className="rounded-full px-3 py-1.5 text-zinc-600 transition hover:bg-white hover:text-zinc-900 hover:shadow-sm"
             >

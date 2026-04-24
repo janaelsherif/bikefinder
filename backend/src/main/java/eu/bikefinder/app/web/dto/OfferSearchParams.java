@@ -25,6 +25,11 @@ public class OfferSearchParams {
     private Integer maxMileageKm;
     /** Source country (ISO-2), e.g. DE */
     private String countryCode;
+    /**
+     * When true, restrict to {@link eu.bikefinder.app.DiscoveryRegion#NEAR_SWITZERLAND_ISO2} (ignores single
+     * {@link #countryCode}). For discovery feeds (Velo news) without wish-style filters.
+     */
+    private Boolean nearbyMarkets;
     /** If true, only offers with warranty_type != none */
     private Boolean warrantyPresent;
     /** If true, only is_bargain = true */
@@ -122,6 +127,14 @@ public class OfferSearchParams {
 
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
+    }
+
+    public Boolean getNearbyMarkets() {
+        return nearbyMarkets;
+    }
+
+    public void setNearbyMarkets(Boolean nearbyMarkets) {
+        this.nearbyMarkets = nearbyMarkets;
     }
 
     public Boolean getWarrantyPresent() {

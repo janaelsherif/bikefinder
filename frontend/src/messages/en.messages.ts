@@ -21,6 +21,7 @@ const en = {
     brand: "EuropeBikeFinder",
     offers: "Listings",
     wunschSearch: "Wish search",
+    veloNews: "Velo news",
     competitivePricing: "Competitive pricing",
     competitorWatch: "Competitor watch",
     sourcingDirectory: "Sourcing directory",
@@ -29,6 +30,22 @@ const en = {
     language: "Language",
     locale_deCH: "German (CH)",
     locale_en: "English",
+  },
+  VeloNews: {
+    heroKicker: "Discovery · Super hits",
+    title: "Velo news",
+    subtitle:
+      "The newest listings from nearby markets (Switzerland, Germany, Austria, France, Italy, Netherlands)—no wish filters. Anything your team imports can surface here: shops, refurb platforms, and other sources, not only named competitors.",
+    footnote:
+      "This page rechecks the workspace every 30 seconds while you keep it open. Rows only appear after a crawl or import has stored them; for near–real-time ads, set marketplace crawls to a cadence your sources allow (see server crawl settings). Hot deals can disappear quickly—open listings you care about right away.",
+    lastUpdated: "Last updated",
+    refreshIn: "Next refresh in ~{n}s",
+    newBadge: "New",
+    polling: "Loading latest arrivals…",
+    error:
+      "Could not load offers. Is the backend running and is this app able to reach it?",
+    empty:
+      "No offers in these markets yet. After crawls or imports run, fresh arrivals will show here first.",
   },
   SortBar: {
     label: "Sort by",

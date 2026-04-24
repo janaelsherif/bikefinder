@@ -83,7 +83,7 @@ This fills Postgres with **live** `rebike.de` product pages (JSON-LD), priced in
 
 - Health: http://localhost:8080/actuator/health  
 - Wish search API: http://localhost:8080/api/v1/offers/wish (strict + near-match fallback)  
-- Offers (filterable): http://localhost:8080/api/v1/offers — e.g. `?bikeCategory=city&maxLandedPriceChf=3000&brand=Specialized`  
+- Offers (filterable): http://localhost:8080/api/v1/offers — e.g. `?bikeCategory=city&maxLandedPriceChf=3000&brand=Specialized` — **Velo news / discovery:** `?offerSort=newest&nearbyMarkets=true` (CH, DE, AT, FR, IT, NL); UI **`/velo-news`** polls every 30s while open.  
 - Similar (no embeddings): `GET /api/v1/offers/{uuid}/similar` — e.g. after you have listing UUIDs from `/offers`
 - **Competitor watch (Hamza 5):** UI at **`/competitor-watch`**; API `GET /api/v1/competitor-watch/dashboard` and `GET /api/v1/competitor-watch/history/{slug}` — when **`EBF_COMPETITOR_WATCH_ENABLED=true`**, default **daily 08:00 Europe/Zurich** (see `ebf.competitor-watch` in `application.yml`). Manual: **`POST /api/v1/system/competitor-watch/run`** (same **`X-Import-Token`** / dev-open rules as import). Heuristic **listing-link count** on each shop URL + delta vs last run; **not** “new listings this week” until you add stable product-ID diffing. Scope / Phase 2: **[docs/SCOPE_AND_PHASE2.md](./docs/SCOPE_AND_PHASE2.md)**.  
 - **Procurement sources** (B2B directory seeds): http://localhost:8080/api/v1/sources — also see `config/sourcing-sources.yaml`  

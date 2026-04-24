@@ -21,6 +21,7 @@ const deCH = {
     brand: "EuropeBikeFinder",
     offers: "Angebote",
     wunschSearch: "Wunsch-Suche",
+    veloNews: "Velo-News",
     competitivePricing: "Marktpreis",
     competitorWatch: "Konkurrenz-Monitor",
     sourcingDirectory: "Sourcing-Verzeichnis",
@@ -29,6 +30,22 @@ const deCH = {
     language: "Sprache",
     locale_deCH: "Deutsch (CH)",
     locale_en: "English",
+  },
+  VeloNews: {
+    heroKicker: "Discovery · Super Hits",
+    title: "Velo-News",
+    subtitle:
+      "Die neuesten Inserate aus den nahen Märkten (CH, DE, AT, FR, IT, NL)—ohne Wunsch-Filter. Alles, was Ihr Team importiert, kann hier erscheinen: Shops, Refurb-Plattformen und andere Quellen, nicht nur benannte Konkurrenten.",
+    footnote:
+      "Diese Seite fragt den Workspace alle 30 Sekunden neu ab, solange sie offen ist. Zeilen erscheinen erst, nachdem ein Crawl oder Import sie gespeichert hat; für fast live Inserate braucht es eine erlaubte Crawl-Taktik an der Quelle (Server-Einstellung). Schnelle Deals können verschwinden—Interessantes sofort öffnen.",
+    lastUpdated: "Zuletzt aktualisiert",
+    refreshIn: "Nächstes Update in ~{n}s",
+    newBadge: "Neu",
+    polling: "Lade neueste Inserate…",
+    error:
+      "Angebote konnten nicht geladen werden. Läuft das Backend und ist es erreichbar?",
+    empty:
+      "Noch keine Angebote in diesen Märkten. Nach Crawls oder Importen erscheinen neue Inserate hier zuerst.",
   },
   SortBar: {
     label: "Sortieren",

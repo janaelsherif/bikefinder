@@ -48,6 +48,8 @@ const ALLOWED_KEYS = new Set([
   "minDiscountVsSwissPct",
   "maxMileageKm",
   "countryCode",
+  /** Discovery feed: CH, DE, AT, FR, IT, NL (server expands). */
+  "nearbyMarkets",
   "warrantyPresent",
   "bargainOnly",
   "size",
@@ -99,6 +101,27 @@ export async function fetchOffersPage(
     return null;
   }
 }
+
+/** Browser poll via Next `/api/offers` proxy (staff token stays server-side). */
+export async function fetchOffersPageViaProxy(
+  params: Record<string, string | string[] | undefined>,
+  options?: { size?: number },
+): Promise<SpringPage | null> {
+  const qs = toOffersQueryString(params, { size: options?.size });
+  const url = `/api/offers?${qs}`;
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) {
+      return null;
+    }
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+/** Client refresh interval for Velo news (ms). */
+export const VELO_NEWS_POLL_MS = 30_000;
 
 /** Staff wish search: strict + optional near-match fallback (Spring {@code /api/v1/offers/wish}). */
 export async function fetchWishSearch(
