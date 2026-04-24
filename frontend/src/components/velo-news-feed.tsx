@@ -108,11 +108,11 @@ export function VeloNewsFeed({ labels }: { labels: VeloNewsFeedLabels }) {
           {labels.empty}
         </p>
       ) : (
-        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid list-none gap-5 p-0 sm:grid-cols-2 lg:grid-cols-3">
           {data.content.map((o) => {
             const isFresh = freshIds.has(o.id);
             return (
-              <li key={o.id} className="relative list-none">
+              <li key={o.id} className="relative">
                 {isFresh && (
                   <span className="absolute right-3 top-3 z-10 rounded-full bg-sky-600 px-2.5 py-0.5 text-xs font-semibold text-white shadow">
                     {labels.newBadge}
